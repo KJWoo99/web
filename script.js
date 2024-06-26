@@ -1,10 +1,10 @@
 
 // 음성 인식 API 초기화
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-const recognition = new SpeechRecognition();
+var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
+var recognition = new SpeechRecognition();
 
 // 결과 표시할 요소 선택
-const resultContainer = document.getElementById('resultContainer');
+var resultContainer = document.getElementById('resultContainer');
 let finalTranscript = '';
 
 // MediaRecorder 설정
@@ -13,12 +13,12 @@ let recordedChunks = [];
 let recordedBlob; // 녹음된 Blob을 저장할 변수
 
 // 모달 요소 선택
-const modal = document.getElementById('modal');
-const confirmButton = document.getElementById('confirmButton');
-const cancelButton = document.getElementById('cancelButton');
+var modal = document.getElementById('modal');
+var confirmButton = document.getElementById('confirmButton');
+var cancelButton = document.getElementById('cancelButton');
 
 // 시작/멈춤 버튼 선택
-const startStopButton = document.getElementById('startStopButton');
+var startStopButton = document.getElementById('startStopButton');
 startStopButton.addEventListener('click', toggleRecognition);
 
 // 결과 처리를 위한 플래그
@@ -30,7 +30,7 @@ recognition.onresult = (event) => {
 
     let interimTranscript = '';
     for (let i = event.resultIndex; i < event.results.length; i++) {
-        const transcript = event.results[i][0].transcript;
+        var transcript = event.results[i][0].transcript;
         if (event.results[i].isFinal) {
             finalTranscript += transcript + ' ';
         } else {
@@ -61,7 +61,7 @@ function hideModal() {
 // 모달 버튼 클릭 이벤트 핸들러 - 예 버튼
 confirmButton.addEventListener('click', () => {
     hideModal();
-    window.location.href = 'my.html';
+    location.href = 'my.html';
 });
 
 // 모달 버튼 클릭 이벤트 핸들러 - 아니요 버튼
@@ -170,11 +170,11 @@ function saveResultToLocal(result) {
 // 화면에 최종 텍스트를 표시하는 함수
 function displayFinalTranscript(text) {
     clearListeningMessage(); // "AI 면접관이 듣고 있습니다" 메시지 삭제
-    const interimItem = document.querySelector('.interim-item');
+    var interimItem = document.querySelector('.interim-item');
     if (interimItem) {
         interimItem.remove(); // 임시 텍스트 요소 삭제
     }
-    const resultItem = document.createElement('div'); // 새로운 결과 추가
+    var resultItem = document.createElement('div'); // 새로운 결과 추가
     resultItem.classList.add('result-item');
     resultItem.textContent = text;
     resultContainer.appendChild(resultItem);
@@ -182,7 +182,7 @@ function displayFinalTranscript(text) {
 
 // "AI 면접관이 듣고 있습니다" 메시지 표시 함수
 function displayListeningMessage() {
-    const listeningMessage = document.createElement('div');
+    var listeningMessage = document.createElement('div');
     listeningMessage.classList.add('listening-message');
     listeningMessage.textContent = 'AI 면접관이 듣고 있습니다';
     resultContainer.appendChild(listeningMessage);
@@ -190,7 +190,7 @@ function displayListeningMessage() {
 
 // "AI 면접관이 듣고 있습니다" 메시지 삭제 함수
 function clearListeningMessage() {
-    const listeningMessage = document.querySelector('.listening-message');
+    var listeningMessage = document.querySelector('.listening-message');
     if (listeningMessage) {
         listeningMessage.remove();
     }
@@ -198,7 +198,7 @@ function clearListeningMessage() {
 
 // 음성 인식 타이머
 let silenceTimer;
-const SILENCE_TIMEOUT = 5000;
+var SILENCE_TIMEOUT = 5000;
 
 function resetSilenceTimer() {
     clearTimeout(silenceTimer);
@@ -210,8 +210,8 @@ function resetSilenceTimer() {
 // 녹음된 오디오를 재생하는 함수
 function playRecordedAudio() {
     if (recordedBlob) {
-        const audioUrl = URL.createObjectURL(recordedBlob);
-        const audio = new Audio(audioUrl);
+        var audioUrl = URL.createObjectURL(recordedBlob);
+        var audio = new Audio(audioUrl);
         audio.play()
             .then(() => {
                 console.log('녹음된 오디오 재생 시작');
@@ -249,9 +249,9 @@ function handleMicrophoneAccessError(err) {
 
 // 일주일 동안 모달창을 보지 않기 기능
 document.addEventListener('DOMContentLoaded', function() {
-    const newModal = document.getElementById('newModal');
-    const closeModalButton = document.getElementById('closeNewModal');
-    const dontShowForAWeekButton = document.getElementById('dontShowForAWeek');
+    var newModal = document.getElementById('newModal');
+    var closeModalButton = document.getElementById('closeNewModal');
+    var dontShowForAWeekButton = document.getElementById('dontShowForAWeek');
 
     // 모달을 숨기는 함수
     function hideModal() {
@@ -271,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 페이지 로드 시 모달 보여주기 결정
     function showModalBasedOnPreference() {
-        const hideUntil = localStorage.getItem('hideModalUntil');
+        var hideUntil = localStorage.getItem('hideModalUntil');
         if (!hideUntil || new Date().getTime() > parseInt(hideUntil, 10)) {
             newModal.style.display = 'block'; // 일주일이 지나거나 설정이 없는 경우 모달 보이기
         } else {
