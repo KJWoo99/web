@@ -1,24 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>음성 인식 예제</title>
-  <style>
-    .output {
-      margin-top: 20px;
-      padding: 10px;
-      border: 1px solid #ccc;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Speech Recognition Example</title>
+<style>
+  .output {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+  }
+</style>
 </head>
 <body>
-  <h1>음성 인식 예제</h1>
+<h1>음성 인식 예제</h1>
 
-  <button id="startSpeechBtn">음성 인식 시작</button>
+<button onclick="sendSpeech()">음성 인식 시작</button>
 
-  <div class="output"></div>
+<div class="output"></div>
 
-  <script src="script.js"></script>
+<script>
+var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+var SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList;
+
+var diagnosticPara = document.querySelector('.output');
+
+function sendSpeech() {
+  var recognition = new SpeechRecognition();
+  var speechRecognitionList = new SpeechGrammarList();
+  recognition.grammars = speechRecognitionList;
+  recognition.lang = 'ko-KR';
+  recognition.interimResults = false; // 중간 결과를 반환할 필요가 없으면 false로 설정
+  recognition.continuous = false; // 한 번만 인식하도록 설정
+  recognition.maxAlternatives = 1;
+
+  recognition.start();
+
+  recognition.onresult = function(event) {
+    var speechResult = event.results[0][0].transcript.toLowerCase();
+    console.log('Confidence: ' + event.results[0][0].confidence);
+    console.log('Speech Result: ' + speechResult);
+    diagnosticPara.textContent = '음성 인식 결과: ' + speechResult + '.';
+  }
+}
+
+// 마이크 권한 요청 함수
+function requestMicrophoneAccess() {
+  return navigator.mediaDevices.getUserMedia({ audio: true });
+}
+
+// 마이크 권한 요청 실패 처리 함수
+function handleMicrophoneAccessError(err) {
+  console.error('마이크 권한을 받을 수 없습니다:', err);
+  alert('마이크 권한이 필요합니다. 브라우저 설정에서 마이크 권한을 허용해주세요.');
+}
+</script>
+
 </body>
 </html>
