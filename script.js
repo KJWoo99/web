@@ -206,39 +206,39 @@ function resetSilenceTimer() {
     }, SILENCE_TIMEOUT);
 }
 
-// // 녹음된 오디오를 재생하는 함수
-// function playRecordedAudio() {
-//     if (recordedBlob) {
-//         const audioUrl = URL.createObjectURL(recordedBlob);
-//         const audio = new Audio(audioUrl);
-//         audio.play()
-//             .then(() => {
-//                 console.log('녹음된 오디오 재생 시작');
-//             })
-//             .catch((error) => {
-//                 console.error('녹음된 오디오 재생 실패:', error);
-//             });
-//     } else {
-//         console.log('녹음된 오디오가 없습니다.');
-//     }
-// }
+// 녹음된 오디오를 재생하는 함수
+function playRecordedAudio() {
+    if (recordedBlob) {
+        const audioUrl = URL.createObjectURL(recordedBlob);
+        const audio = new Audio(audioUrl);
+        audio.play()
+            .then(() => {
+                console.log('녹음된 오디오 재생 시작');
+            })
+            .catch((error) => {
+                console.error('녹음된 오디오 재생 실패:', error);
+            });
+    } else {
+        console.log('녹음된 오디오가 없습니다.');
+    }
+}
 
-// // 녹음된 오디오 재생 버튼 클릭 이벤트 핸들러
-// document.getElementById('playButton').addEventListener('click', playRecordedAudio);
+// 녹음된 오디오 재생 버튼 클릭 이벤트 핸들러
+document.getElementById('playButton').addEventListener('click', playRecordedAudio);
 
-// // 마이크 권한 요청 함수
-// function requestMicrophoneAccess() {
-//     return new Promise((resolve, reject) => {
-//         navigator.mediaDevices.getUserMedia({ audio: true })
-//             .then(stream => {
-//                 stream.getTracks().forEach(track => track.stop()); // 권한 확인 후 트랙 중지
-//                 resolve();
-//             })
-//             .catch(err => {
-//                 reject(err);
-//             });
-//     });
-// }
+// 마이크 권한 요청 함수
+function requestMicrophoneAccess() {
+    return new Promise((resolve, reject) => {
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(stream => {
+                stream.getTracks().forEach(track => track.stop()); // 권한 확인 후 트랙 중지
+                resolve();
+            })
+            .catch(err => {
+                reject(err);
+            });
+    });
+}
 
 // 마이크 권한 요청 실패 처리 함수
 function handleMicrophoneAccessError(err) {
