@@ -3,74 +3,42 @@ var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
 var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent;
 var diagnosticPara = document.querySelector('.output');
 
-var mediaRecorder;
-var recordedChunks = [];
-var recordedBlob;
-
 function sendSpeech() {
-    var recognition = new SpeechRecognition();
-    var speechRecognitionList = new SpeechGrammarList();
-    recognition.grammars = speechRecognitionList;
-    recognition.lang = 'ko-KR';
-    recognition.interimResults = false;
-    recognition.continuous = false;
-    recognition.maxAlternatives = 1;
+  // 마이크 사용 권한 요청
+  navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(function(stream) {
+      var recognition = new SpeechRecognition();
+      var speechRecognitionList = new SpeechGrammarList();
+      recognition.grammars = speechRecognitionList;
+      recognition.lang = 'ko-KR';
+      recognition.interimResults = false; // true: 중간 결과를 반환, false: 최종 결과만 반환
+      recognition.continuous = false; // true: 음성인식을 계속해서 수행, false: 음성인식을 한번만 수행
+      recognition.maxAlternatives = 1;
 
-    recognition.start();
+      recognition.start();
 
-    recognition.onresult = function(event) {
+      recognition.onresult = function(event) {
         var speechResult = event.results[0][0].transcript.toLowerCase();
         console.log('Confidence: ' + event.results[0][0].confidence);
         console.log('Speech Result: ' + speechResult);
         diagnosticPara.textContent = 'Speech received: ' + speechResult + '.';
-    };
+      }
 
-    recognition.onend = function(event) {
-        console.log('SpeechRecognition.onend');
-        if (mediaRecorder && mediaRecorder.state === 'recording') {
-            mediaRecorder.stop(); // 음성 인식이 끝날 때 녹음을 멈춤
-        }
-    };
+      recognition.onaudiostart = function() {
+        console.log('Audio capturing started.');
+      }
 
-    navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(stream => {
-            mediaRecorder = new MediaRecorder(stream);
-            mediaRecorder.ondataavailable = handleDataAvailable;
-            mediaRecorder.onstop = handleStop;
-            recordedChunks = [];
-            mediaRecorder.start();
-        })
-        .catch(err => {
-            console.error('녹음을 위한 권한을 받지 못했습니다:', err);
-        });
+      recognition.onaudioend = function() {
+        console.log('Audio capturing ended.');
+      }
+
+      recognition.onerror = function(event) {
+        console.log('Error occurred in recognition: ' + event.error);
+        diagnosticPara.textContent = 'Error occurred in recognition: ' + event.error + '.';
+      }
+    })
+    .catch(function(err) {
+      console.log('The following getUserMedia error occurred: ' + err);
+      diagnosticPara.textContent = 'The following getUserMedia error occurred: ' + err + '.';
+    });
 }
-
-function handleDataAvailable(event) {
-    if (event.data.size > 0) {
-        recordedChunks.push(event.data);
-    }
-}
-
-function handleStop(event) {
-    recordedBlob = new Blob(recordedChunks, { type: 'audio/wav' });
-    console.log('녹음된 Blob:', recordedBlob);
-}
-
-function playRecordedAudio() {
-    if (recordedBlob) {
-        const audioUrl = URL.createObjectURL(recordedBlob);
-        const audio = new Audio(audioUrl);
-        audio.play()
-            .then(() => {
-                console.log('녹음된 오디오 재생 시작');
-            })
-            .catch((error) => {
-                console.error('녹음된 오디오 재생 실패:', error);
-            });
-    } else {
-        console.log('녹음된 오디오가 없습니다.');
-    }
-}
-
-document.getElementById('startButton').addEventListener('click', sendSpeech);
-document.getElementById('playButton').addEventListener('click', playRecordedAudio);
