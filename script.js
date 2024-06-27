@@ -64,14 +64,14 @@ cancelButton.addEventListener('click', () => {
     startRecognition();
 });
 
-// // 음성 인식 시작/멈춤 토글 함수
-// function toggleRecognition() {
-//     if (startStopButton.classList.contains('active')) {
-//         showModal();
-//     } else {
-//         requestMicrophoneAccess().then(startRecognition).catch(handleMicrophoneAccessError);
-//     }
-// }
+// 음성 인식 시작/멈춤 토글 함수
+function toggleRecognition() {
+    if (startStopButton.classList.contains('active')) {
+        showModal();
+    } else {
+        requestMicrophoneAccess().then(startRecognition).catch(handleMicrophoneAccessError);
+    }
+}
 
 // 음성 인식 일시정지 함수
 function pauseRecognition() {
@@ -153,18 +153,18 @@ function resetSilenceTimer() {
     silenceTimer = setTimeout(stopRecognition, SILENCE_TIMEOUT);
 }
 
-// 마이크 권한 요청 함수
-function requestMicrophoneAccess() {
-    return navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(stream => {
-            stream.getTracks().forEach(track => track.stop()); // 권한 확인 후 트랙 중지
-        })
-        .catch(err => {
-            console.error('마이크 권한을 받을 수 없습니다:', err);
-            alert('마이크 권한이 필요합니다. 브라우저 설정에서 마이크 권한을 허용해주세요.');
-            throw err;
-        });
-}
+// // 마이크 권한 요청 함수
+// function requestMicrophoneAccess() {
+//     return navigator.mediaDevices.getUserMedia({ audio: true })
+//         .then(stream => {
+//             stream.getTracks().forEach(track => track.stop()); // 권한 확인 후 트랙 중지
+//         })
+//         .catch(err => {
+//             console.error('마이크 권한을 받을 수 없습니다:', err);
+//             alert('마이크 권한이 필요합니다. 브라우저 설정에서 마이크 권한을 허용해주세요.');
+//             throw err;
+//         });
+// }
 
 // 일주일 동안 모달창을 보지 않기 기능
 document.addEventListener('DOMContentLoaded', function () {
