@@ -1,52 +1,66 @@
 // speechRecognition.js
 
 var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-var SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList;
-
 var diagnosticPara = document.querySelector('.output');
 var listeningMessage = document.querySelector('.listening-message'); // Element to show the listening message
+var recognition = new SpeechRecognition();
+var silenceTimer; // Timer variable for silence detection
 
-function sendSpeech() {
-  var recognition = new SpeechRecognition();
-  var speechRecognitionList = new SpeechGrammarList();
-  recognition.grammars = speechRecognitionList;
-  recognition.lang = 'ko-KR';
-  recognition.interimResults = false;
-  recognition.continuous = true; // Allow continuous recognition
-  recognition.maxAlternatives = 1;
+recognition.lang = 'ko-KR';
+recognition.interimResults = false;
+recognition.continuous = true; // Allow continuous recognition
+recognition.maxAlternatives = 1;
 
-  var silenceTimer;
-
-  recognition.start();
+recognition.onstart = function() {
+  console.log('Speech recognition started');
   listeningMessage.textContent = "AI 면접관이 듣고 있습니다";
+  // Reset the silence timer on start
+  resetSilenceTimer();
+};
 
-  recognition.onresult = function(event) {
-    clearTimeout(silenceTimer); // Reset the silence timer on result
-    var speechResult = event.results[0][0].transcript.toLowerCase();
-    console.log('Confidence: ' + event.results[0][0].confidence);
-    console.log('Speech Result: ' + speechResult);
-    diagnosticPara.textContent = speechResult + '.';
-    localStorage.setItem('speechResult', speechResult);
-    listeningMessage.textContent = ""; // Hide the listening message
-    recognition.stop(); // Stop recognition after result
-  }
+recognition.onresult = function(event) {
+  var speechResult = event.results[0][0].transcript.toLowerCase();
+  console.log('Confidence: ' + event.results[0][0].confidence);
+  console.log('Speech Result: ' + speechResult);
+  diagnosticPara.textContent = speechResult + '.';
+  localStorage.setItem('speechResult', speechResult);
+  // Reset the silence timer on result
+  resetSilenceTimer();
+};
 
-  recognition.onspeechend = function() {
-    clearTimeout(silenceTimer); // Clear the silence timer
-    silenceTimer = setTimeout(() => {
-      recognition.stop();
-    }, 5000); // Set the timer to stop recognition after 5 seconds of silence
-  }
+recognition.onspeechend = function() {
+  console.log('Speech recognition ended');
+  // Start the silence timer after speech ends
+  startSilenceTimer();
+};
 
-  recognition.onend = function() {
-    listeningMessage.textContent = ""; // Hide the listening message
-  }
+recognition.onend = function() {
+  console.log('Speech recognition end event');
+  clearTimeout(silenceTimer); // Clear the silence timer
+  listeningMessage.textContent = ""; // Hide the listening message
+};
 
-  recognition.onerror = function(event) {
-    clearTimeout(silenceTimer); // Clear the silence timer
-    listeningMessage.textContent = ""; // Hide the listening message
-    console.error('Speech recognition error:', event.error);
-  }
+recognition.onerror = function(event) {
+  console.error('Speech recognition error:', event.error);
+  clearTimeout(silenceTimer); // Clear the silence timer
+  listeningMessage.textContent = ""; // Hide the listening message
+};
+
+function startSpeechRecognition() {
+  recognition.start();
+}
+
+function resetSilenceTimer() {
+  clearTimeout(silenceTimer);
+  silenceTimer = setTimeout(function() {
+    recognition.stop();
+  }, 5000); // Set the timer to stop recognition after 5 seconds of silence
+}
+
+function startSilenceTimer() {
+  silenceTimer = setTimeout(function() {
+    recognition.stop();
+  }, 5000); // Set the timer to stop recognition after 5 seconds of silence
 }
 
 function requestMicrophoneAccess() {
