@@ -39,7 +39,6 @@ body {
     display: flex;
     justify-content: center;
     gap: 10px;
-.output {
     margin-top: 20px;
 }
 
@@ -143,6 +142,3 @@ body {
 #newModal .modal-content h2 {
     color: #333; /* 제목 색상 변경 */
 }
-
-    border: 1px solid #ccc;
-  }
