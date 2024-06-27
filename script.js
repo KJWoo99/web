@@ -32,13 +32,7 @@ recognition.onresult = (event) => {
         }
     }
 
-    // 중복 결과 처리 방지를 위해 최종 결과만 처리
-    if (finalTranscript.trim() !== '') {
-        displayFinalTranscript(finalTranscript);
-        saveResultToLocal(finalTranscript); // 결과를 로컬 스토리지에 저장
-        finalTranscript = ''; // 결과 초기화
-    }
-
+    // Reset silence timer on receiving a result
     resetSilenceTimer();
 };
 
@@ -103,6 +97,7 @@ function stopRecognition() {
     console.log('음성 인식 멈춤');
 
     startStopButton.classList.remove('active'); // 버튼 비활성화
+    displayFinalTranscript(finalTranscript); // 최종 결과 표시
     clearTimeout(silenceTimer); // Silence 타이머 초기화
 }
 
@@ -112,9 +107,9 @@ recognition.onerror = (event) => {
 };
 
 // 사용자가 말을 멈춰도 계속 인식하도록 설정
-recognition.continuous = true;
-recognition.interimResults = false;
-SpeechRecognition.maxAlternatives = 10000;
+recognition.continuous = false;
+recognition.interimResults = true;
+recognition.maxAlternatives = 10000;
 
 // 결과를 로컬 스토리지에 저장하는 함수
 function saveResultToLocal(result) {
@@ -124,6 +119,10 @@ function saveResultToLocal(result) {
 // 화면에 최종 텍스트를 표시하는 함수
 function displayFinalTranscript(text) {
     clearListeningMessage(); // "AI 면접관이 듣고 있습니다" 메시지 삭제
+    const interimItem = document.querySelector('.interim-item');
+    if (interimItem) {
+        interimItem.remove(); // 임시 텍스트 요소 삭제
+    }
     const resultItem = document.createElement('div'); // 새로운 결과 추가
     resultItem.classList.add('result-item');
     resultItem.textContent = text;
@@ -148,7 +147,7 @@ function clearListeningMessage() {
 
 // 음성 인식 타이머
 let silenceTimer;
-const SILENCE_TIMEOUT = 3000;
+const SILENCE_TIMEOUT = 5000;
 
 function resetSilenceTimer() {
     clearTimeout(silenceTimer);
@@ -167,8 +166,6 @@ function requestMicrophoneAccess() {
             throw err;
         });
 }
-
-
 
 // 일주일 동안 모달창을 보지 않기 기능
 document.addEventListener('DOMContentLoaded', function () {
