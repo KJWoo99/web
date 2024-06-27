@@ -39,6 +39,8 @@ function startRecognition() {
     recognition.start();
     console.log('음성 인식 시작');
     startStopButton.classList.add('active');
+
+    initRecorder();
     resetSilenceTimer();
 }
 
@@ -46,6 +48,10 @@ function startRecognition() {
 function stopRecognition() {
     recognition.stop();
     console.log('음성 인식 멈춤');
+
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+    }
     startStopButton.classList.remove('active');
     displayFinalTranscript(finalTranscript);
     saveResultToLocal(finalTranscript);
@@ -85,6 +91,7 @@ function resetSilenceTimer() {
     }, SILENCE_TIMEOUT);
 }
 
+
 // 마이크 권한 요청 함수
 function requestMicrophoneAccess() {
     return new Promise((resolve, reject) => {
@@ -104,3 +111,8 @@ function handleMicrophoneAccessError(err) {
     console.error('마이크 권한을 받을 수 없습니다:', err);
     alert('마이크 권한이 필요합니다. 브라우저 설정에서 마이크 권한을 허용해주세요.');
 }
+
+// 페이지 로드 시 초기화
+document.addEventListener('DOMContentLoaded', () => {
+    // 초기화 코드 추가 가능
+});
