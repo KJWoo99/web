@@ -1,46 +1,26 @@
+<!-- Inside your HTML file -->
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>음성 인식 예제</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-        #resultContainer {
-            width: 100%;
-            max-width: 600px;
-            margin-top: 20px;
-        }
-        .result-item {
-            background-color: #f0f0f0;
-            padding: 10px;
-            margin-bottom: 5px;
-            border-radius: 5px;
-        }
-        #startStopButton {
-            padding: 10px 20px;
-            margin-top: 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        #startStopButton.active {
-            background-color: #4CAF50;
-            color: white;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Speech Recognition Example</title>
+  <style>
+    .output {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+  </style>
 </head>
 <body>
-    <h1>음성 인식 예제</h1>
-    <button id="startStopButton">음성 인식 시작/멈춤</button>
-    <div id="resultContainer"></div>
+  <h1>음성 인식 예제</h1>
 
-    <!-- JavaScript 파일 불러오기 -->
-    <script src="script.js"></script>
+  <button onclick="sendSpeech()">음성 인식 시작</button>
+
+  <div class="output"></div>
+
+  <!-- Linking the external JavaScript file -->
+  <script src="script.js"></script>
 </body>
 </html>
