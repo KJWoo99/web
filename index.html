@@ -1,26 +1,13 @@
-<!-- Inside your HTML file -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Speech Recognition Example</title>
-  <style>
-    .output {
-      margin-top: 20px;
-      padding: 10px;
-      border: 1px solid #ccc;
-    }
-  </style>
+  <title>Speech Recognition</title>
 </head>
 <body>
-  <h1>음성 인식 예제</h1>
-
-  <button onclick="sendSpeech()">음성 인식 시작</button>
-
-  <div class="output"></div>
-
-  <!-- Linking the external JavaScript file -->
-  <script src="script.js"></script>
+  <div class="listening-message"></div>
+  <p class="output"></p>
+  <button onclick="sendSpeech()">Start Speech Recognition</button>
+  <script src="srcipt.js"></script>
 </body>
 </html>
