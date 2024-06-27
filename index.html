@@ -1,27 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>음성 인식 테스트</title>
-<style>
-  .output {
-    font-size: 1.2em;
-    margin-top: 20px;
-  }
-  .listening-message {
-    font-style: italic;
-    color: gray;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 면접</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<h1>음성 인식 테스트</h1>
-<p class="listening-message"></p>
-<p class="output"></p>
-<button id="startButton">음성 인식 시작</button>
-<button id="playButton" style="display:none;">녹음 파일 재생</button>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>AI 면접</h1>
+        </div>
 
-<script src="script.js"></script>
+        <!-- 새로운 모달창 (음성 인식 가이드) -->
+        <div id="newModal" class="modal">
+            <div class="modal-content">
+                <h2>AI 면접 가이드</h2>
+                <p>마이크 버튼을 누른 뒤 1초 후에 말씀해 주세요. 말씀이 끝나면 잠시 기다려 주세요.</p>
+                <p>AI가 말한 내용을 인식하여 답변할 것입니다.</p>
+                <p>마이크 실행 중에 마이크 버튼을 누르면 면접을 종료할 수 있습니다.</p>
+                <p>위 유의사항을 숙지하세요.</p>
+                
+                <button id="closeNewModal" class="close-button">닫기</button>
+                <button id="dontShowForAWeek" class="dont-show-button">일주일 동안 보지 않기</button>
+            </div>
+        </div>
+
+        <div id="resultContainer" class="chat-results"></div>
+        
+        <div class="chat-buttons">
+            <button id="startStopButton" class="mic-button">
+                <img src="mic.png" alt="Mic">
+            </button>
+            <button id="playButton" class="play-button">녹음된 오디오 재생(테스트용)</button>
+            <button id="playTestAudioButton" class="play-button">테스트 오디오 재생</button>
+
+        </div>
+    </div>
+    
+    <!-- 내부 모달창 -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <p>모의 면접을 중단하시겠습니까?</p>
+            <button id="confirmButton" class="modal-button">예</button>
+            <button id="cancelButton" class="modal-button">아니요</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
