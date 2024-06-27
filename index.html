@@ -26,15 +26,16 @@
             </div>
         </div>
 
-        <div id="resultContainer" class="chat-results"></div>
+        <div id="resultContainer" class="chat-results">
+            <p class="output">Speech received: </p>
+        </div>
         
         <div class="chat-buttons">
-            <button id="startStopButton" class="mic-button">
+            <button id="startStopButton" class="mic-button" onclick="sendSpeech()">
                 <img src="mic.png" alt="Mic">
             </button>
             <button id="playButton" class="play-button">녹음된 오디오 재생(테스트용)</button>
             <button id="playTestAudioButton" class="play-button">테스트 오디오 재생</button>
-
         </div>
     </div>
     
@@ -47,6 +48,61 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
+        var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
+        var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent;
+        var diagnosticPara = document.querySelector('.output');
+
+        function sendSpeech() {
+          var recognition = new SpeechRecognition();
+          var speechRecognitionList = new SpeechGrammarList();
+          recognition.grammars = speechRecognitionList;
+          recognition.lang = 'ko-KR';
+          recognition.interimResults = false;
+          recognition.continious = false;
+          recognition.maxAlternatives = 1;
+
+          recognition.start();
+
+          recognition.onresult = function(event) {
+            var speechResult = event.results[0][0].transcript.toLowerCase();
+            console.log('Confidence: ' + event.results[0][0].confidence);
+            console.log('Speech Result: ' + speechResult);
+            diagnosticPara.textContent = 'Speech received: ' + speechResult + '.';
+          }
+
+          recognition.onaudiostart = function(event) {
+              console.log('SpeechRecognition.onaudiostart');
+          }
+
+          recognition.onaudioend = function(event) {
+              console.log('SpeechRecognition.onaudioend');
+          }
+
+          recognition.onend = function(event) {
+              console.log('SpeechRecognition.onend');
+          }
+
+          recognition.onnomatch = function(event) {
+              console.log('SpeechRecognition.onnomatch');
+          }
+
+          recognition.onsoundstart = function(event) {
+              console.log('SpeechRecognition.onsoundstart');
+          }
+
+          recognition.onsoundend = function(event) {
+              console.log('SpeechRecognition.onsoundend');
+          }
+
+          recognition.onspeechstart = function (event) {
+              console.log('SpeechRecognition.onspeechstart');
+          }
+          recognition.onstart = function(event) {
+              console.log('SpeechRecognition.onstart');
+          }
+        }
+    </script>
 </body>
 </html>
