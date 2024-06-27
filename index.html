@@ -4,13 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Speech Recognition Example</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <h1>음성 인식 예제</h1>
 
-<button onclick="sendSpeech()">음성 인식 시작</button>
-
+<button id="startButton" onclick="sendSpeech()">음성 인식 시작</button>
+<button id="playButton" onclick="playRecordedAudio()" disabled>녹음된 음성 듣기</button>
+<div id="statusMessage" class="status"></div>
 <div class="output"></div>
 
 <script src="script.js"></script>
