@@ -1,14 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>음성 인식 및 녹음</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+        }
+        .output {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
 </head>
 <body>
-    <button onclick="sendSpeech();">STT 버튼</button>
-    <p class="output">...diagnostic messages</p>
+    <h1>음성 인식 및 녹음</h1>
+    <button id="startButton">음성 인식 시작</button>
+    <button id="playButton">녹음된 오디오 재생</button>
+    <p class="output">여기에 음성 인식 결과가 표시됩니다.</p>
+
+    <script src="script.js"></script>
 </body>
-<script src="script.js"></script>
 </html>
