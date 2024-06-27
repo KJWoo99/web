@@ -18,7 +18,7 @@ function sendSpeech() {
     var speechResult = event.results[0][0].transcript.toLowerCase();
     console.log('Confidence: ' + event.results[0][0].confidence);
     console.log('Speech Result: ' + speechResult);
-    diagnosticPara.textContent = 'Speech received: ' + speechResult + '.';
+    diagnosticPara.textContent = '음성 인식 결과: ' + speechResult + '.';
   }
 }
 
