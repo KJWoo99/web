@@ -32,13 +32,7 @@ recognition.onresult = (event) => {
         }
     }
 
-    // 중복 결과 처리 방지를 위해 최종 결과만 처리
-    if (finalTranscript.trim() !== '') {
-        displayFinalTranscript(finalTranscript);
-        saveResultToLocal(finalTranscript); // 결과를 로컬 스토리지에 저장
-        finalTranscript = ''; // 결과 초기화
-    }
-
+    // Reset silence timer on receiving a result
     resetSilenceTimer();
 };
 
@@ -103,6 +97,7 @@ function stopRecognition() {
     console.log('음성 인식 멈춤');
 
     startStopButton.classList.remove('active'); // 버튼 비활성화
+    displayFinalTranscript(finalTranscript); // 최종 결과 표시
     clearTimeout(silenceTimer); // Silence 타이머 초기화
 }
 
@@ -112,7 +107,7 @@ recognition.onerror = (event) => {
 };
 
 // 사용자가 말을 멈춰도 계속 인식하도록 설정
-recognition.continuous = true;
+recognition.continuous = false;
 recognition.interimResults = true;
 
 // 결과를 로컬 스토리지에 저장하는 함수
@@ -123,6 +118,10 @@ function saveResultToLocal(result) {
 // 화면에 최종 텍스트를 표시하는 함수
 function displayFinalTranscript(text) {
     clearListeningMessage(); // "AI 면접관이 듣고 있습니다" 메시지 삭제
+    const interimItem = document.querySelector('.interim-item');
+    if (interimItem) {
+        interimItem.remove(); // 임시 텍스트 요소 삭제
+    }
     const resultItem = document.createElement('div'); // 새로운 결과 추가
     resultItem.classList.add('result-item');
     resultItem.textContent = text;
@@ -166,3 +165,36 @@ function requestMicrophoneAccess() {
             throw err;
         });
 }
+
+// 일주일 동안 모달창을 보지 않기 기능
+document.addEventListener('DOMContentLoaded', function () {
+    const newModal = document.getElementById('newModal');
+    const closeModalButton = document.getElementById('closeNewModal');
+    const dontShowForAWeekButton = document.getElementById('dontShowForAWeek');
+
+    // 모달을 숨기는 함수
+    function hideModal() {
+        newModal.style.display = 'none'; // 모달 숨기기
+    }
+
+    // 닫기 버튼 클릭 시 모달 숨기기
+    closeModalButton.addEventListener('click', hideModal);
+
+    // "일주일 동안 보지 않기" 버튼 클릭 시 모달 숨기고 설정 저장
+    dontShowForAWeekButton.addEventListener('click', function () {
+        hideModal();
+        localStorage.setItem('hideModalUntil', Date.now() + 7 * 24 * 60 * 60 * 1000); // 현재 시간 기준으로 일주일 뒤의 타임스탬프 저장
+    });
+
+    // 페이지 로드 시 모달 보여주기 결정
+    function showModalBasedOnPreference() {
+        const hideUntil = localStorage.getItem('hideModalUntil');
+        if (!hideUntil || Date.now() > parseInt(hideUntil, 10)) {
+            newModal.style.display = 'block'; // 일주일이 지나거나 설정이 없는 경우 모달 보이기
+        } else {
+            hideModal(); // 아직 일주일이 지나지 않은 경우 모달 숨기기
+        }
+    }
+
+    showModalBasedOnPreference(); // 페이지 로드 시 모달 보여주기 결정
+});
