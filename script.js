@@ -8,8 +8,11 @@ let finalTranscript = '';
 
 // 모달 요소 선택
 const modal = document.getElementById('modal');
+const newModal = document.getElementById('newModal');
 const confirmButton = document.getElementById('confirmButton');
 const cancelButton = document.getElementById('cancelButton');
+const closeNewModalButton = document.getElementById('closeNewModal');
+const dontShowForAWeekButton = document.getElementById('dontShowForAWeek');
 
 // 시작/멈춤 버튼 선택
 const startStopButton = document.getElementById('startStopButton');
@@ -36,22 +39,6 @@ recognition.onresult = (event) => {
     resetSilenceTimer();
 };
 
-// 모달창 보여주는 함수
-function showModal() {
-    pauseRecognition();
-    modal.style.display = 'block';
-    processResults = false; // 결과 처리 중지
-}
-
-// 모달창 숨기는 함수
-function hideModal() {
-    modal.style.display = 'none';
-    processResults = true; // 결과 처리 다시 시작
-    if (!startStopButton.classList.contains('active')) {
-        startRecognition();
-    }
-}
-
 // 모달 버튼 클릭 이벤트 핸들러 - 예 버튼
 confirmButton.addEventListener('click', () => {
     hideModal();
@@ -64,9 +51,18 @@ cancelButton.addEventListener('click', () => {
     startRecognition();
 });
 
+// 닫기 버튼 클릭 시 모달 숨기기
+closeNewModalButton.addEventListener('click', hideModal);
+
+// "일주일 동안 보지 않기" 버튼 클릭 시 모달 숨기고 설정 저장
+dontShowForAWeekButton.addEventListener('click', () => {
+    hideModal();
+    localStorage.setItem('hideModalUntil', Date.now() + 7 * 24 * 60 * 60 * 1000); // 현재 시간 기준으로 일주일 뒤의 타임스탬프 저장
+});
+
 // 음성 인식 시작/멈춤 토글 함수
 function toggleRecognition() {
-    if (startStopButton.classList.contains('active')) {
+    if (startStopButton.classList.toggle('active')) {
         showModal();
     } else {
         requestMicrophoneAccess().then(startRecognition).catch(handleMicrophoneAccessError);
@@ -86,7 +82,6 @@ function startRecognition() {
 
     recognition.start();
     console.log('음성 인식 시작');
-    startStopButton.classList.add('active'); // 버튼 활성화
 
     resetSilenceTimer(); // Silence 타이머 시작
 }
@@ -155,48 +150,15 @@ function resetSilenceTimer() {
 
 // 마이크 권한 요청 함수
 function requestMicrophoneAccess() {
-    return navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(stream => {
-            // 권한을 확인하고 처리할 내용
-        })
-        .catch(err => {
-            // 권한 요청 실패 시 처리
-            console.error('마이크 권한을 받을 수 없습니다:', err);
-            alert('마이크 권한이 필요합니다. 브라우저 설정에서 마이크 권한을 허용해주세요.');
-            throw err;
-        });
+    return navigator.mediaDevices.getUserMedia({ audio: true });
 }
 
-
-// 일주일 동안 모달창을 보지 않기 기능
-document.addEventListener('DOMContentLoaded', function () {
-    const newModal = document.getElementById('newModal');
-    const closeModalButton = document.getElementById('closeNewModal');
-    const dontShowForAWeekButton = document.getElementById('dontShowForAWeek');
-
-    // 모달을 숨기는 함수
-    function hideModal() {
-        newModal.style.display = 'none'; // 모달 숨기기
+// 페이지 로드 시 모달 보여주기 결정
+document.addEventListener('DOMContentLoaded', () => {
+    const hideUntil = localStorage.getItem('hideModalUntil');
+    if (!hideUntil || Date.now() > parseInt(hideUntil, 10)) {
+        newModal.style.display = 'block'; // 일주일이 지나거나 설정이 없는 경우 모달 보이기
+    } else {
+        hideModal(); // 아직 일주일이 지나지 않은 경우 모달 숨기기
     }
-
-    // 닫기 버튼 클릭 시 모달 숨기기
-    closeModalButton.addEventListener('click', hideModal);
-
-    // "일주일 동안 보지 않기" 버튼 클릭 시 모달 숨기고 설정 저장
-    dontShowForAWeekButton.addEventListener('click', function () {
-        hideModal();
-        localStorage.setItem('hideModalUntil', Date.now() + 7 * 24 * 60 * 60 * 1000); // 현재 시간 기준으로 일주일 뒤의 타임스탬프 저장
-    });
-
-    // 페이지 로드 시 모달 보여주기 결정
-    function showModalBasedOnPreference() {
-        const hideUntil = localStorage.getItem('hideModalUntil');
-        if (!hideUntil || Date.now() > parseInt(hideUntil, 10)) {
-            newModal.style.display = 'block'; // 일주일이 지나거나 설정이 없는 경우 모달 보이기
-        } else {
-            hideModal(); // 아직 일주일이 지나지 않은 경우 모달 숨기기
-        }
-    }
-
-    showModalBasedOnPreference(); // 페이지 로드 시 모달 보여주기 결정
 });
