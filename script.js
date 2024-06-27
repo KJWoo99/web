@@ -124,20 +124,20 @@ function stopRecognition() {
     clearTimeout(silenceTimer); // Silence 타이머 초기화
 }
 
-// // MediaRecorder 초기화
-// function initRecorder() {
-//     navigator.mediaDevices.getUserMedia({ audio: true })
-//         .then(stream => {
-//             mediaRecorder = new MediaRecorder(stream);
-//             mediaRecorder.ondataavailable = handleDataAvailable;
-//             mediaRecorder.onstop = handleStop;
-//             recordedChunks = [];
-//             mediaRecorder.start();
-//         })
-//         .catch(err => {
-//             console.error('녹음을 위한 권한을 받지 못했습니다:', err);
-//         });
-// }
+// MediaRecorder 초기화
+function initRecorder() {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+            mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.ondataavailable = handleDataAvailable;
+            mediaRecorder.onstop = handleStop;
+            recordedChunks = [];
+            mediaRecorder.start();
+        })
+        .catch(err => {
+            console.error('녹음을 위한 권한을 받지 못했습니다:', err);
+        });
+}
 
 // // MediaRecorder 데이터 처리
 // function handleDataAvailable(event) {
