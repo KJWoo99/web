@@ -76,14 +76,12 @@ function toggleRecognition() {
 // 음성 인식 일시정지 함수
 function pauseRecognition() {
     recognition.stop();
-    // 녹음 관련 코드가 여기에 들어갔었습니다.
     clearListeningMessage(); // "AI 면접관이 듣고 있습니다" 메시지 삭제
 }
 
 // 음성 인식 재시작 함수
 function resumeRecognition() {
     recognition.start();
-    // 녹음 관련 코드가 여기에 들어갔었습니다.
     displayListeningMessage(); // "AI 면접관이 듣고 있습니다" 메시지 표시
 }
 
@@ -96,8 +94,6 @@ function startRecognition() {
     console.log('음성 인식 시작');
     startStopButton.classList.add('active'); // 버튼 활성화
 
-    // 녹음 관련 코드가 여기에 들어갔었습니다.
-
     resetSilenceTimer(); // Silence 타이머 시작
 }
 
@@ -105,8 +101,6 @@ function startRecognition() {
 function stopRecognition() {
     recognition.stop();
     console.log('음성 인식 멈춤');
-
-    // 녹음 관련 코드가 여기에 들어갔었습니다.
 
     startStopButton.classList.remove('active'); // 버튼 비활성화
     displayFinalTranscript(finalTranscript); // 최종 결과 표시
