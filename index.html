@@ -1,24 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Speech Recognition Example</title>
-<style>
-  .output {
-    margin-top: 20px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    width: 300px;
-    min-height: 50px;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>음성 인식 및 녹음</title>
+    <style>
+        .active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        /* 예시로 표시하는 메시지 스타일 */
+        .listening-message {
+            display: none;
+            color: blue;
+        }
+    </style>
 </head>
 <body>
-<h1>Speech Recognition Example</h1>
-<button onclick="sendSpeech()">Start Speech Recognition</button>
-<div class="output"></div>
+    <div id="resultContainer">
+        <!-- 여기에 인식된 결과가 표시될 수 있습니다. -->
+    </div>
+    <button id="startStopButton">시작 / 멈춤</button>
+    <div id="listeningMessage" class="listening-message">AI 면접관이 듣고 있습니다...</div>
 
-<script src="script.js"></script>
+    <!-- 외부 JavaScript 파일 로드 -->
+    <script src="script.js"></script>
 </body>
 </html>
