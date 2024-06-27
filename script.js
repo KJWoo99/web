@@ -1,60 +1,51 @@
-var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
-var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
-var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent;
-var diagnosticPara = document.querySelector('.output');
+document.addEventListener('DOMContentLoaded', function() {
+    const startButton = document.getElementById('start-button');
+    const stopButton = document.getElementById('stop-button');
+    const resultDiv = document.getElementById('result');
 
-// Button reference
-var startBtn = document.getElementById('startBtn');
+    // Web Speech API를 사용할 수 있는지 확인
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        resultDiv.textContent = "이 브라우저는 음성 인식을 지원하지 않습니다.";
+        return;
+    }
 
-// Function to handle speech recognition
-function sendSpeech() {
-  // Request microphone access
-  navigator.mediaDevices.getUserMedia({ audio: true })
-    .then(function(stream) {
-      var recognition = new SpeechRecognition();
-      var speechRecognitionList = new SpeechGrammarList();
-      recognition.grammars = speechRecognitionList;
-      recognition.lang = 'ko-KR'; // Language for recognition (Korean)
-      recognition.interimResults = false; // Set to true for interim results
-      recognition.continuous = false; // Set to true for continuous recognition
-      recognition.maxAlternatives = 1;
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'ko-KR'; // 한국어 설정
+    recognition.interimResults = false; // 중간 결과 표시 여부
+    recognition.maxAlternatives = 1; // 최대 대안 수
 
-      recognition.start();
+    recognition.onstart = function() {
+        resultDiv.textContent = "음성 인식이 시작되었습니다. 말해보세요...";
+        startButton.disabled = true;
+        stopButton.disabled = false;
+    };
 
-      recognition.onresult = function(event) {
-        var speechResult = event.results[0][0].transcript.toLowerCase();
-        console.log('Confidence: ' + event.results[0][0].confidence);
-        console.log('Speech Result: ' + speechResult);
-        diagnosticPara.textContent = 'Speech received: ' + speechResult + '.';
-      };
+    recognition.onspeechend = function() {
+        recognition.stop();
+    };
 
-      recognition.onaudiostart = function() {
-        console.log('Audio capturing started.');
-      };
+    recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        resultDiv.textContent = `인식된 텍스트: ${transcript}`;
+    };
 
-      recognition.onaudioend = function() {
-        console.log('Audio capturing ended.');
-      };
+    recognition.onerror = function(event) {
+        resultDiv.textContent = `오류 발생: ${event.error}`;
+        startButton.disabled = false;
+        stopButton.disabled = true;
+    };
 
-      recognition.onerror = function(event) {
-        console.log('Error occurred in recognition: ' + event.error);
-        diagnosticPara.textContent = 'Error occurred in recognition: ' + event.error + '.';
-      };
-    })
-    .catch(function(err) {
-      console.log('The following getUserMedia error occurred: ' + err);
-      diagnosticPara.textContent = 'The following getUserMedia error occurred: ' + err + '.';
-    });
-}
+    recognition.onend = function() {
+        startButton.disabled = false;
+        stopButton.disabled = true;
+    };
 
-// Event listener for the button click
-startBtn.addEventListener('click', function() {
-  // Check if SpeechRecognition is supported
-  if (SpeechRecognition) {
-    // Call sendSpeech function on button click
-    sendSpeech();
-  } else {
-    // SpeechRecognition is not supported
-    diagnosticPara.textContent = 'Speech recognition is not supported in your browser.';
-  }
-});
+    startButton.addEventListener('click', function() {
+        // 마이크 권한 요청
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(function(stream) {
+                recognition.start();
+            })
+            .catch(function(err) {
+                resultDiv.textContent = `마이크 권한이 필요합니다: ${err}`;
