@@ -64,14 +64,14 @@ cancelButton.addEventListener('click', () => {
     startRecognition();
 });
 
-// 음성 인식 시작/멈춤 토글 함수
-function toggleRecognition() {
-    if (startStopButton.classList.contains('active')) {
-        showModal();
-    } else {
-        requestMicrophoneAccess().then(startRecognition).catch(handleMicrophoneAccessError);
-    }
-}
+// // 음성 인식 시작/멈춤 토글 함수
+// function toggleRecognition() {
+//     if (startStopButton.classList.contains('active')) {
+//         showModal();
+//     } else {
+//         requestMicrophoneAccess().then(startRecognition).catch(handleMicrophoneAccessError);
+//     }
+// }
 
 // 음성 인식 일시정지 함수
 function pauseRecognition() {
