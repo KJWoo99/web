@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>음성 인식 예제</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Speech Recognition Example</title>
+  <style>
+    .output {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      font-family: Arial, sans-serif;
+    }
+  </style>
 </head>
 <body>
-    <button id="start-button">음성 인식 시작</button>
-    <button id="stop-button" disabled>음성 인식 멈춤</button>
-    <div id="result">음성 인식 결과 표시</div>
-    <script src="script.js"></script>
+  <button onclick="sendSpeech()">음성 인식 시작</button>
+  <p class="output">음성 결과가 여기에 나타납니다.</p>
+
 </body>
 </html>
