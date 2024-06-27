@@ -148,7 +148,7 @@ function clearListeningMessage() {
 
 // 음성 인식 타이머
 let silenceTimer;
-const SILENCE_TIMEOUT = 5000;
+const SILENCE_TIMEOUT = 3000;
 
 function resetSilenceTimer() {
     clearTimeout(silenceTimer);
