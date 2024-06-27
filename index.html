@@ -1,45 +1,27 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>음성 인식 예제</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
-    .output {
-      margin-top: 20px;
-      font-size: 1.2em;
-    }
-    .listening-message {
-      font-style: italic;
-      color: gray;
-      margin-top: 10px;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 1em;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>음성 인식 테스트</title>
+<style>
+  .output {
+    font-size: 1.2em;
+    margin-top: 20px;
+  }
+  .listening-message {
+    font-style: italic;
+    color: gray;
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>음성 인식 예제</h1>
+<h1>음성 인식 테스트</h1>
+<p class="listening-message"></p>
+<p class="output"></p>
+<button id="startButton">음성 인식 시작</button>
+<button id="playButton" style="display:none;">녹음 파일 재생</button>
 
-    <p class="output"></p>
-    <p class="listening-message"></p>
-    <button onclick="sendSpeech()">음성 인식 시작</button>
-  </div>
-
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
