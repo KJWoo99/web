@@ -2,107 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 면접</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
 </head>
 <body>
-    <div class="chat-container">
-        <div class="chat-header">
-            <h1>AI 면접</h1>
-        </div>
-
-        <!-- 새로운 모달창 (음성 인식 가이드) -->
-        <div id="newModal" class="modal">
-            <div class="modal-content">
-                <h2>AI 면접 가이드</h2>
-                <p>마이크 버튼을 누른 뒤 1초 후에 말씀해 주세요. 말씀이 끝나면 잠시 기다려 주세요.</p>
-                <p>AI가 말한 내용을 인식하여 답변할 것입니다.</p>
-                <p>마이크 실행 중에 마이크 버튼을 누르면 면접을 종료할 수 있습니다.</p>
-                <p>위 유의사항을 숙지하세요.</p>
-                
-                <button id="closeNewModal" class="close-button">닫기</button>
-                <button id="dontShowForAWeek" class="dont-show-button">일주일 동안 보지 않기</button>
-            </div>
-        </div>
-
-        <div id="resultContainer" class="chat-results">
-            <p class="output">Speech received: </p>
-        </div>
-        
-        <div class="chat-buttons">
-            <button id="startStopButton" class="mic-button" onclick="sendSpeech()">
-                <img src="mic.png" alt="Mic">
-            </button>
-            <button id="playButton" class="play-button">녹음된 오디오 재생(테스트용)</button>
-            <button id="playTestAudioButton" class="play-button">테스트 오디오 재생</button>
-        </div>
-    </div>
-    
-    <!-- 내부 모달창 -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <p>모의 면접을 중단하시겠습니까?</p>
-            <button id="confirmButton" class="modal-button">예</button>
-            <button id="cancelButton" class="modal-button">아니요</button>
-        </div>
-    </div>
-
-    <script>
-        var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
-        var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
-        var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent;
-        var diagnosticPara = document.querySelector('.output');
-
-        function sendSpeech() {
-          var recognition = new SpeechRecognition();
-          var speechRecognitionList = new SpeechGrammarList();
-          recognition.grammars = speechRecognitionList;
-          recognition.lang = 'ko-KR';
-          recognition.interimResults = false;
-          recognition.continious = false;
-          recognition.maxAlternatives = 1;
-
-          recognition.start();
-
-          recognition.onresult = function(event) {
-            var speechResult = event.results[0][0].transcript.toLowerCase();
-            console.log('Confidence: ' + event.results[0][0].confidence);
-            console.log('Speech Result: ' + speechResult);
-            diagnosticPara.textContent = 'Speech received: ' + speechResult + '.';
-          }
-
-          recognition.onaudiostart = function(event) {
-              console.log('SpeechRecognition.onaudiostart');
-          }
-
-          recognition.onaudioend = function(event) {
-              console.log('SpeechRecognition.onaudioend');
-          }
-
-          recognition.onend = function(event) {
-              console.log('SpeechRecognition.onend');
-          }
-
-          recognition.onnomatch = function(event) {
-              console.log('SpeechRecognition.onnomatch');
-          }
-
-          recognition.onsoundstart = function(event) {
-              console.log('SpeechRecognition.onsoundstart');
-          }
-
-          recognition.onsoundend = function(event) {
-              console.log('SpeechRecognition.onsoundend');
-          }
-
-          recognition.onspeechstart = function (event) {
-              console.log('SpeechRecognition.onspeechstart');
-          }
-          recognition.onstart = function(event) {
-              console.log('SpeechRecognition.onstart');
-          }
-        }
-    </script>
+    <button onclick="sendSpeech();">STT 버튼</button>
+    <p class="output">...diagnostic messages</p>
 </body>
 </html>
