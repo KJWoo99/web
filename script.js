@@ -37,7 +37,7 @@ recognition.onresult = (event) => {
         }
     }
 
-    // Reset silence timer on receiving a result
+    displayInterimTranscript(interimTranscript); // 실시간 결과 표시
     resetSilenceTimer();
 };
 
@@ -122,6 +122,11 @@ function stopRecognition() {
     displayFinalTranscript(finalTranscript); // 최종 결과 표시
     saveResultToLocal(finalTranscript); // 결과 저장
     clearTimeout(silenceTimer); // Silence 타이머 초기화
+
+    // 최종 결과가 없으면 경고 메시지 표시
+    if (finalTranscript.trim() === '') {
+        alert('데이터 없음');
+    }
 }
 
 // MediaRecorder 초기화
@@ -177,6 +182,17 @@ function displayFinalTranscript(text) {
     resultItem.classList.add('result-item');
     resultItem.textContent = text;
     resultContainer.appendChild(resultItem);
+}
+
+// 실시간 텍스트를 화면에 표시하는 함수
+function displayInterimTranscript(text) {
+    let interimItem = document.querySelector('.interim-item');
+    if (!interimItem) {
+        interimItem = document.createElement('div');
+        interimItem.classList.add('interim-item');
+        resultContainer.appendChild(interimItem);
+    }
+    interimItem.textContent = text;
 }
 
 // "AI 면접관이 듣고 있습니다" 메시지 표시 함수
