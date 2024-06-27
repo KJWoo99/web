@@ -1,30 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 면접</title>
-    <link rel="stylesheet" href="style.css">
+    <title>음성 인식 예제</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        #resultContainer {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+        }
+        .result-item {
+            background-color: #f0f0f0;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
+        #startStopButton {
+            padding: 10px 20px;
+            margin-top: 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #startStopButton.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-    <div class="chat-container">
-        <div class="chat-header">
-            <h1>AI 면접</h1>
-        </div>
+    <h1>음성 인식 예제</h1>
+    <button id="startStopButton">음성 인식 시작/멈춤</button>
+    <div id="resultContainer"></div>
 
-        <div id="resultContainer" class="chat-results"></div>
-        
-        <div class="chat-buttons">
-            <button id="startStopButton" class="mic-button">
-                마이크
-            </button>
-            <button id="playButton" class="play-button">녹음된 오디오 재생(테스트용)</button>
-            <button id="playTestAudioButton" class="play-button">테스트 오디오 재생</button>
-
-        </div>
-    </div>
-
-
+    <!-- JavaScript 파일 불러오기 -->
     <script src="script.js"></script>
 </body>
 </html>
