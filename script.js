@@ -113,7 +113,7 @@ recognition.onerror = (event) => {
 
 // 사용자가 말을 멈춰도 계속 인식하도록 설정
 recognition.continuous = true;
-recognition.interimResults = true;
+recognition.interimResults = false;
 SpeechRecognition.maxAlternatives = 10000;
 
 // 결과를 로컬 스토리지에 저장하는 함수
