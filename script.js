@@ -5,10 +5,14 @@ var diagnosticPara = document.querySelector('.output');
 var statusMessage = document.getElementById('statusMessage');
 var startButton = document.getElementById('startButton');
 var playButton = document.getElementById('playButton');
-var recordedAudioBlob;
+var recordedAudioChunks = [];
 
-function sendSpeech() {
-  var recognition = new SpeechRecognition();
+var recognition;
+var mediaRecorder;
+
+function startSpeechRecognition() {
+  // 음성 인식 객체 초기화
+  recognition = new SpeechRecognition();
   var speechRecognitionList = new SpeechGrammarList();
   recognition.grammars = speechRecognitionList;
   recognition.lang = 'ko-KR';
@@ -20,11 +24,6 @@ function sendSpeech() {
   statusMessage.textContent = 'AI 면접관이 듣고 있습니다';
 
   recognition.start();
-
-  // 5초 후 음성 인식 종료
-  setTimeout(() => {
-    recognition.stop();
-  }, 5000);
 
   recognition.onresult = function(event) {
     var speechResult = event.results[0][0].transcript.toLowerCase();
@@ -39,7 +38,7 @@ function sendSpeech() {
     statusMessage.textContent = '';
 
     // 녹음된 오디오를 변수에 저장
-    recordedAudioBlob = event.results[0][0].blob;
+    recordedAudioChunks.push(event.results[0][0].blob);
     playButton.disabled = false; // 재생 버튼 활성화
   };
 
@@ -79,8 +78,9 @@ function handleMicrophoneAccessError(err) {
 
 // 녹음된 오디오를 재생하는 함수
 function playRecordedAudio() {
-  if (recordedAudioBlob) {
-    var audioUrl = URL.createObjectURL(recordedAudioBlob);
+  if (recordedAudioChunks.length > 0) {
+    var combinedBlob = new Blob(recordedAudioChunks, { type: 'audio/wav' });
+    var audioUrl = URL.createObjectURL(combinedBlob);
     var audio = new Audio(audioUrl);
     audio.play();
   } else {
