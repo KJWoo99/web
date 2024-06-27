@@ -157,14 +157,16 @@ function resetSilenceTimer() {
 function requestMicrophoneAccess() {
     return navigator.mediaDevices.getUserMedia({ audio: true })
         .then(stream => {
-            stream.getTracks().forEach(track => track.stop()); // 권한 확인 후 트랙 중지
+            // 권한을 확인하고 처리할 내용
         })
         .catch(err => {
+            // 권한 요청 실패 시 처리
             console.error('마이크 권한을 받을 수 없습니다:', err);
             alert('마이크 권한이 필요합니다. 브라우저 설정에서 마이크 권한을 허용해주세요.');
             throw err;
         });
 }
+
 
 // 일주일 동안 모달창을 보지 않기 기능
 document.addEventListener('DOMContentLoaded', function () {
