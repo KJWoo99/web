@@ -6,10 +6,10 @@ const recognition = new SpeechRecognition();
 const resultContainer = document.getElementById('resultContainer');
 let finalTranscript = '';
 
-// // MediaRecorder 설정
-// let mediaRecorder;
-// let recordedChunks = [];
-// let recordedBlob; // 녹음된 Blob을 저장할 변수
+// MediaRecorder 설정
+let mediaRecorder;
+let recordedChunks = [];
+let recordedBlob; // 녹음된 Blob을 저장할 변수
 
 // 모달 요소 선택
 const modal = document.getElementById('modal');
@@ -124,33 +124,33 @@ function stopRecognition() {
     clearTimeout(silenceTimer); // Silence 타이머 초기화
 }
 
-// // MediaRecorder 초기화
-// function initRecorder() {
-//     navigator.mediaDevices.getUserMedia({ audio: true })
-//         .then(stream => {
-//             mediaRecorder = new MediaRecorder(stream);
-//             mediaRecorder.ondataavailable = handleDataAvailable;
-//             mediaRecorder.onstop = handleStop;
-//             recordedChunks = [];
-//             mediaRecorder.start();
-//         })
-//         .catch(err => {
-//             console.error('녹음을 위한 권한을 받지 못했습니다:', err);
-//         });
-// }
+// MediaRecorder 초기화
+function initRecorder() {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+            mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.ondataavailable = handleDataAvailable;
+            mediaRecorder.onstop = handleStop;
+            recordedChunks = [];
+            mediaRecorder.start();
+        })
+        .catch(err => {
+            console.error('녹음을 위한 권한을 받지 못했습니다:', err);
+        });
+}
 
-// // MediaRecorder 데이터 처리
-// function handleDataAvailable(event) {
-//     if (event.data.size > 0) {
-//         recordedChunks.push(event.data);
-//     }
-// }
+// MediaRecorder 데이터 처리
+function handleDataAvailable(event) {
+    if (event.data.size > 0) {
+        recordedChunks.push(event.data);
+    }
+}
 
-// // MediaRecorder 멈춤 처리
-// function handleStop(event) {
-//     recordedBlob = new Blob(recordedChunks, { type: 'audio/wav' });
-//     console.log('녹음된 Blob:', recordedBlob);
-// }
+// MediaRecorder 멈춤 처리
+function handleStop(event) {
+    recordedBlob = new Blob(recordedChunks, { type: 'audio/wav' });
+    console.log('녹음된 Blob:', recordedBlob);
+}
 
 // 음성 인식 중 에러 처리
 recognition.onerror = (event) => {
