@@ -79,12 +79,6 @@ function pauseRecognition() {
     clearListeningMessage(); // "AI 면접관이 듣고 있습니다" 메시지 삭제
 }
 
-// 음성 인식 재시작 함수
-function resumeRecognition() {
-    recognition.start();
-    displayListeningMessage(); // "AI 면접관이 듣고 있습니다" 메시지 표시
-}
-
 // 음성 인식 시작 함수
 function startRecognition() {
     finalTranscript = ''; // 이전 결과 초기화
@@ -104,7 +98,6 @@ function stopRecognition() {
 
     startStopButton.classList.remove('active'); // 버튼 비활성화
     displayFinalTranscript(finalTranscript); // 최종 결과 표시
-    saveResultToLocal(finalTranscript); // 결과 저장
     clearTimeout(silenceTimer); // Silence 타이머 초기화
 }
 
@@ -157,29 +150,20 @@ const SILENCE_TIMEOUT = 5000;
 
 function resetSilenceTimer() {
     clearTimeout(silenceTimer);
-    silenceTimer = setTimeout(() => {
-        stopRecognition();
-    }, SILENCE_TIMEOUT);
+    silenceTimer = setTimeout(stopRecognition, SILENCE_TIMEOUT);
 }
 
 // 마이크 권한 요청 함수
 function requestMicrophoneAccess() {
-    return new Promise((resolve, reject) => {
-        navigator.mediaDevices.getUserMedia({ audio: true })
-            .then(stream => {
-                stream.getTracks().forEach(track => track.stop()); // 권한 확인 후 트랙 중지
-                resolve();
-            })
-            .catch(err => {
-                reject(err);
-            });
-    });
-}
-
-// 마이크 권한 요청 실패 처리 함수
-function handleMicrophoneAccessError(err) {
-    console.error('마이크 권한을 받을 수 없습니다:', err);
-    alert('마이크 권한이 필요합니다. 브라우저 설정에서 마이크 권한을 허용해주세요.');
+    return navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+            stream.getTracks().forEach(track => track.stop()); // 권한 확인 후 트랙 중지
+        })
+        .catch(err => {
+            console.error('마이크 권한을 받을 수 없습니다:', err);
+            alert('마이크 권한이 필요합니다. 브라우저 설정에서 마이크 권한을 허용해주세요.');
+            throw err;
+        });
 }
 
 // 일주일 동안 모달창을 보지 않기 기능
@@ -194,20 +178,18 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // 닫기 버튼 클릭 시 모달 숨기기
-    closeModalButton.addEventListener('click', function () {
-        hideModal();
-    });
+    closeModalButton.addEventListener('click', hideModal);
 
     // "일주일 동안 보지 않기" 버튼 클릭 시 모달 숨기고 설정 저장
     dontShowForAWeekButton.addEventListener('click', function () {
         hideModal();
-        localStorage.setItem('hideModalUntil', new Date().getTime() + 7 * 24 * 60 * 60 * 1000); // 현재 시간 기준으로 일주일 뒤의 타임스탬프 저장
+        localStorage.setItem('hideModalUntil', Date.now() + 7 * 24 * 60 * 60 * 1000); // 현재 시간 기준으로 일주일 뒤의 타임스탬프 저장
     });
 
     // 페이지 로드 시 모달 보여주기 결정
     function showModalBasedOnPreference() {
         const hideUntil = localStorage.getItem('hideModalUntil');
-        if (!hideUntil || new Date().getTime() > parseInt(hideUntil, 10)) {
+        if (!hideUntil || Date.now() > parseInt(hideUntil, 10)) {
             newModal.style.display = 'block'; // 일주일이 지나거나 설정이 없는 경우 모달 보이기
         } else {
             hideModal(); // 아직 일주일이 지나지 않은 경우 모달 숨기기
