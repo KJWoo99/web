@@ -1,18 +1,17 @@
-var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
-var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
-var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent;
+var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+var SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList;
+var SpeechRecognitionEvent = window.SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent;
 var diagnosticPara = document.querySelector('.output');
 
 function sendSpeech() {
-  // 마이크 사용 권한 요청
   navigator.mediaDevices.getUserMedia({ audio: true })
     .then(function(stream) {
       var recognition = new SpeechRecognition();
       var speechRecognitionList = new SpeechGrammarList();
       recognition.grammars = speechRecognitionList;
       recognition.lang = 'ko-KR';
-      recognition.interimResults = false; // true: 중간 결과를 반환, false: 최종 결과만 반환
-      recognition.continuous = false; // true: 음성인식을 계속해서 수행, false: 음성인식을 한번만 수행
+      recognition.interimResults = false;
+      recognition.continuous = false;
       recognition.maxAlternatives = 1;
 
       recognition.start();
@@ -24,21 +23,47 @@ function sendSpeech() {
         diagnosticPara.textContent = 'Speech received: ' + speechResult + '.';
       }
 
-      recognition.onaudiostart = function() {
-        console.log('Audio capturing started.');
+      recognition.onaudiostart = function(event) {
+        console.log('SpeechRecognition.onaudiostart');
       }
 
-      recognition.onaudioend = function() {
-        console.log('Audio capturing ended.');
+      recognition.onaudioend = function(event) {
+        console.log('SpeechRecognition.onaudioend');
       }
 
+      recognition.onend = function(event) {
+        console.log('SpeechRecognition.onend');
+      }
+
+      recognition.onnomatch = function(event) {
+        console.log('SpeechRecognition.onnomatch');
+      }
+
+      recognition.onsoundstart = function(event) {
+        console.log('SpeechRecognition.onsoundstart');
+      }
+
+      recognition.onsoundend = function(event) {
+        console.log('SpeechRecognition.onsoundend');
+      }
+
+      recognition.onspeechstart = function(event) {
+        console.log('SpeechRecognition.onspeechstart');
+      }
+
+      recognition.onstart = function(event) {
+        console.log('SpeechRecognition.onstart');
+      }
+
+      // Handle errors
       recognition.onerror = function(event) {
-        console.log('Error occurred in recognition: ' + event.error);
-        diagnosticPara.textContent = 'Error occurred in recognition: ' + event.error + '.';
+        console.error('Speech recognition error detected: ' + event.error);
       }
+
+      // Connect the media stream to the recognition object to enable audio input
+      recognition.stream = stream;
     })
     .catch(function(err) {
-      console.log('The following getUserMedia error occurred: ' + err);
-      diagnosticPara.textContent = 'The following getUserMedia error occurred: ' + err + '.';
+      console.error('Error accessing microphone:', err);
     });
 }
