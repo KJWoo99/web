@@ -32,18 +32,7 @@ recognition.onresult = (event) => {
         }
     }
 
-    // 임시 텍스트가 있는 경우 화면에 표시
-    if (interimTranscript.trim() !== '') {
-        displayInterimTranscript(interimTranscript);
-    }
-
-    // 최종 텍스트가 있는 경우 화면에 표시 및 저장
-    if (finalTranscript.trim() !== '') {
-        displayFinalTranscript(finalTranscript);
-        saveResultToLocal(finalTranscript); // 결과를 로컬 스토리지에 저장
-        finalTranscript = ''; // 최종 결과 초기화
-    }
-
+    // Reset silence timer on receiving a result
     resetSilenceTimer();
 };
 
@@ -118,7 +107,7 @@ recognition.onerror = (event) => {
 };
 
 // 사용자가 말을 멈춰도 계속 인식하도록 설정
-recognition.continuous = false;
+recognition.continuous = true;
 recognition.interimResults = false;
 
 // 결과를 로컬 스토리지에 저장하는 함수
