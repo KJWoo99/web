@@ -164,22 +164,27 @@ function requestMicrophoneAccess() {
         });
 }
 
+
 // 일주일 동안 모달창을 보지 않기 기능
 document.addEventListener('DOMContentLoaded', function () {
     const newModal = document.getElementById('newModal');
     const closeModalButton = document.getElementById('closeNewModal');
     const dontShowForAWeekButton = document.getElementById('dontShowForAWeek');
+
     // 모달을 숨기는 함수
     function hideModal() {
         newModal.style.display = 'none'; // 모달 숨기기
     }
+
     // 닫기 버튼 클릭 시 모달 숨기기
     closeModalButton.addEventListener('click', hideModal);
+
     // "일주일 동안 보지 않기" 버튼 클릭 시 모달 숨기고 설정 저장
     dontShowForAWeekButton.addEventListener('click', function () {
         hideModal();
         localStorage.setItem('hideModalUntil', Date.now() + 7 * 24 * 60 * 60 * 1000); // 현재 시간 기준으로 일주일 뒤의 타임스탬프 저장
     });
+
     // 페이지 로드 시 모달 보여주기 결정
     function showModalBasedOnPreference() {
         const hideUntil = localStorage.getItem('hideModalUntil');
@@ -189,5 +194,6 @@ document.addEventListener('DOMContentLoaded', function () {
             hideModal(); // 아직 일주일이 지나지 않은 경우 모달 숨기기
         }
     }
+
     showModalBasedOnPreference(); // 페이지 로드 시 모달 보여주기 결정
 });
