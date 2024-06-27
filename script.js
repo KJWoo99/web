@@ -164,9 +164,19 @@ function resetSilenceTimer() {
 
 // 마이크 권한 요청 함수
 function requestMicrophoneAccess() {
-    return navigator.mediaDevices.getUserMedia({ audio: true });
+    return new Promise((resolve, reject) => {
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(stream => {
+                stream.getTracks().forEach(track => track.stop()); // 권한 확인 후 트랙 중지
+                resolve();
+            })
+            .catch(err => {
+                reject(err);
+            });
+    });
 }
-  
+
+// 마이크 권한 요청 실패 처리 함수
 function handleMicrophoneAccessError(err) {
     console.error('마이크 권한을 받을 수 없습니다:', err);
     alert('마이크 권한이 필요합니다. 브라우저 설정에서 마이크 권한을 허용해주세요.');
