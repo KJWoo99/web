@@ -1,30 +1,24 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>음성 인식 및 녹음</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        button {
-            padding: 10px 20px;
-            margin: 10px;
-            font-size: 16px;
-        }
-        .output {
-            margin-top: 20px;
-            font-size: 18px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Speech Recognition Example</title>
+<style>
+  .output {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
+  }
+</style>
 </head>
 <body>
-    <h1>음성 인식 및 녹음</h1>
-    <button id="startButton">음성 인식 시작</button>
-    <button id="playButton">녹음된 오디오 재생</button>
-    <p class="output">여기에 음성 인식 결과가 표시됩니다.</p>
-</body>
+<h1>Speech Recognition Example</h1>
+<button onclick="sendSpeech()">Start Speech Recognition</button>
+<p class="output">Speech recognition results will appear here.</p>
+
 <script src="script.js"></script>
+</body>
 </html>
