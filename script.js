@@ -6,11 +6,6 @@ const recognition = new SpeechRecognition();
 const resultContainer = document.getElementById('resultContainer');
 let finalTranscript = '';
 
-// // MediaRecorder 설정
-// let mediaRecorder;
-// let recordedChunks = [];
-// let recordedBlob; // 녹음된 Blob을 저장할 변수
-
 // 모달 요소 선택
 const modal = document.getElementById('modal');
 const confirmButton = document.getElementById('confirmButton');
@@ -81,18 +76,14 @@ function toggleRecognition() {
 // 음성 인식 일시정지 함수
 function pauseRecognition() {
     recognition.stop();
-    if (mediaRecorder && mediaRecorder.state === 'recording') {
-        mediaRecorder.pause();
-    }
+    // 녹음 관련 코드가 여기에 들어갔었습니다.
     clearListeningMessage(); // "AI 면접관이 듣고 있습니다" 메시지 삭제
 }
 
 // 음성 인식 재시작 함수
 function resumeRecognition() {
     recognition.start();
-    if (mediaRecorder && mediaRecorder.state === 'paused') {
-        mediaRecorder.resume();
-    }
+    // 녹음 관련 코드가 여기에 들어갔었습니다.
     displayListeningMessage(); // "AI 면접관이 듣고 있습니다" 메시지 표시
 }
 
@@ -105,7 +96,8 @@ function startRecognition() {
     console.log('음성 인식 시작');
     startStopButton.classList.add('active'); // 버튼 활성화
 
-    initRecorder(); // 녹음을 위한 MediaRecorder 초기화
+    // 녹음 관련 코드가 여기에 들어갔었습니다.
+
     resetSilenceTimer(); // Silence 타이머 시작
 }
 
@@ -114,43 +106,13 @@ function stopRecognition() {
     recognition.stop();
     console.log('음성 인식 멈춤');
 
-    if (mediaRecorder && mediaRecorder.state === 'recording') {
-        mediaRecorder.stop(); // 녹음 중지
-    }
+    // 녹음 관련 코드가 여기에 들어갔었습니다.
 
     startStopButton.classList.remove('active'); // 버튼 비활성화
     displayFinalTranscript(finalTranscript); // 최종 결과 표시
     saveResultToLocal(finalTranscript); // 결과 저장
     clearTimeout(silenceTimer); // Silence 타이머 초기화
 }
-
-// MediaRecorder 초기화
-function initRecorder() {
-    navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(stream => {
-            mediaRecorder = new MediaRecorder(stream);
-            mediaRecorder.ondataavailable = handleDataAvailable;
-            mediaRecorder.onstop = handleStop;
-            recordedChunks = [];
-            mediaRecorder.start();
-        })
-        .catch(err => {
-            console.error('녹음을 위한 권한을 받지 못했습니다:', err);
-        });
-}
-
-// // MediaRecorder 데이터 처리
-// function handleDataAvailable(event) {
-//     if (event.data.size > 0) {
-//         recordedChunks.push(event.data);
-//     }
-// }
-
-// // MediaRecorder 멈춤 처리
-// function handleStop(event) {
-//     recordedBlob = new Blob(recordedChunks, { type: 'audio/wav' });
-//     console.log('녹음된 Blob:', recordedBlob);
-// }
 
 // 음성 인식 중 에러 처리
 recognition.onerror = (event) => {
@@ -205,26 +167,6 @@ function resetSilenceTimer() {
         stopRecognition();
     }, SILENCE_TIMEOUT);
 }
-
-// 녹음된 오디오를 재생하는 함수
-function playRecordedAudio() {
-    if (recordedBlob) {
-        const audioUrl = URL.createObjectURL(recordedBlob);
-        const audio = new Audio(audioUrl);
-        audio.play()
-            .then(() => {
-                console.log('녹음된 오디오 재생 시작');
-            })
-            .catch((error) => {
-                console.error('녹음된 오디오 재생 실패:', error);
-            });
-    } else {
-        console.log('녹음된 오디오가 없습니다.');
-    }
-}
-
-// 녹음된 오디오 재생 버튼 클릭 이벤트 핸들러
-document.getElementById('playButton').addEventListener('click', playRecordedAudio);
 
 // 마이크 권한 요청 함수
 function requestMicrophoneAccess() {
