@@ -22,18 +22,21 @@ let processResults = true;
 recognition.onresult = (event) => {
     if (!processResults) return;
 
+    let interimTranscript = '';
     for (let i = event.resultIndex; i < event.results.length; i++) {
         const transcript = event.results[i][0].transcript;
         if (event.results[i].isFinal) {
             finalTranscript += transcript + ' ';
+        } else {
+            interimTranscript += transcript;
         }
     }
 
-    // 최종 텍스트가 있는 경우 화면에 표시 및 저장
+    // 중복 결과 처리 방지를 위해 최종 결과만 처리
     if (finalTranscript.trim() !== '') {
         displayFinalTranscript(finalTranscript);
         saveResultToLocal(finalTranscript); // 결과를 로컬 스토리지에 저장
-        finalTranscript = ''; // 최종 결과 초기화
+        finalTranscript = ''; // 결과 초기화
     }
 
     resetSilenceTimer();
@@ -110,8 +113,8 @@ recognition.onerror = (event) => {
 
 // 사용자가 말을 멈춰도 계속 인식하도록 설정
 recognition.continuous = true;
-recognition.interimResults = false;
-recognition.maxAlternatives = 10000;
+recognition.interimResults = true;
+SpeechRecognition.maxAlternatives = 10000;
 
 // 결과를 로컬 스토리지에 저장하는 함수
 function saveResultToLocal(result) {
@@ -164,6 +167,7 @@ function requestMicrophoneAccess() {
             throw err;
         });
 }
+
 
 
 // 일주일 동안 모달창을 보지 않기 기능
