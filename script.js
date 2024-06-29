@@ -70,9 +70,9 @@ cancelButton.addEventListener('click', () => {
 
 // 음성 인식 시작/멈춤 토글 함수
 function toggleRecognition() {
-    if (isRecognitionActive) {
-        stopRecognition();
-        showModal();
+    if (startStopButton.classList.contains('active')) {
+        pauseRecognition();
+        showModal(); 
     } else {
         startRecognition();
     }
