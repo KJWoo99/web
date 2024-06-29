@@ -1,21 +1,24 @@
 // 음성 인식 API 초기화
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
+
 // 결과 표시할 요소 선택
 const resultContainer = document.getElementById('resultContainer');
 let finalTranscript = '';
+
 // 모달 요소 선택
 const modal = document.getElementById('modal');
 const confirmButton = document.getElementById('confirmButton');
 const cancelButton = document.getElementById('cancelButton');
+
 // 시작/멈춤 버튼 선택
 const startStopButton = document.getElementById('startStopButton');
 startStopButton.addEventListener('click', toggleRecognition);
+
 // 결과 처리를 위한 플래그
-let processResults = true;
-
-
-
+let isRecognitionActive = false;
+let silenceTimer;
+const SILENCE_TIMEOUT = 5000;
 
 // localStorage 지원 여부 확인
 function isLocalStorageSupported() {
@@ -28,10 +31,8 @@ function isLocalStorageSupported() {
     }
 }
 
-
 // 음성 인식 결과 처리
 recognition.onresult = (event) => {
-    if (!processResults) return;
     let interimTranscript = '';
     for (let i = event.resultIndex; i < event.results.length; i++) {
         const transcript = event.results[i][0].transcript;
@@ -41,21 +42,28 @@ recognition.onresult = (event) => {
             interimTranscript += transcript;
         }
     }
-    // Reset silence timer on receiving a result
+    resultContainer.innerHTML = `<p>${finalTranscript}</p><p class="interim">${interimTranscript}</p>`;
     resetSilenceTimer();
+};
+
+recognition.onend = () => {
+    if (isRecognitionActive) {
+        recognition.start();
+    }
 };
 
 // 모달창 보여주는 함수
 function showModal() {
     pauseRecognition();
     modal.style.display = 'block';
-    processResults = false; // 결과 처리 중지
 }
 
 // 모달창 숨기는 함수
 function hideModal() {
     modal.style.display = 'none';
-    processResults = true; // 결과 처리 다시 시작
+    if (isRecognitionActive) {
+        resumeRecognition();
+    }
 }
 
 // 모달 버튼 클릭 이벤트 핸들러 - 예 버튼
@@ -67,14 +75,13 @@ confirmButton.addEventListener('click', () => {
 // 모달 버튼 클릭 이벤트 핸들러 - 아니요 버튼
 cancelButton.addEventListener('click', () => {
     hideModal();
-    resumeRecognition(); // 음성 인식 재개
 });
 
 // 음성 인식 시작/멈춤 토글 함수
 function toggleRecognition() {
-    if (startStopButton.classList.contains('active')) {
-        pauseRecognition();
-        showModal(); 
+    if (isRecognitionActive) {
+        stopRecognition();
+        showModal();
     } else {
         startRecognition();
     }
@@ -83,36 +90,38 @@ function toggleRecognition() {
 // 음성 인식 일시정지 함수
 function pauseRecognition() {
     recognition.stop();
-    clearListeningMessage(); // "AI 면접관이 듣고 있습니다" 메시지 삭제
+    clearListeningMessage();
     console.log('음성 인식 일시 정지');
 }
 
 // 음성 인식 재개 함수
 function resumeRecognition() {
     recognition.start();
-    displayListeningMessage(); // "AI 면접관이 듣고 있습니다" 메시지 표시
+    displayListeningMessage();
     console.log('음성 인식 재개');
-    resetSilenceTimer(); // Silence 타이머 재시작
+    resetSilenceTimer();
 }
 
 // 음성 인식 시작 함수
 function startRecognition() {
-    finalTranscript = ''; // 이전 결과 초기화
-    displayListeningMessage(); // "AI 면접관이 듣고 있습니다" 메시지 표시
+    finalTranscript = '';
+    isRecognitionActive = true;
     recognition.start();
+    displayListeningMessage();
     console.log('음성 인식 시작');
-    startStopButton.classList.add('active'); // 버튼 활성화
-    resetSilenceTimer(); // Silence 타이머 시작
+    startStopButton.classList.add('active');
+    resetSilenceTimer();
 }
 
 // 음성 인식 멈춤 함수
 function stopRecognition() {
+    isRecognitionActive = false;
     recognition.stop();
-    console.log('음성 인식 멈춤');
+    clearTimeout(silenceTimer);
+    console.log('음성 인식 종료');
     startStopButton.classList.remove('active');
     displayFinalTranscript(finalTranscript);
-    saveResultToLocal(finalTranscript); // 여기에서 결과 저장
-    clearTimeout(silenceTimer);
+    saveResultToLocal(finalTranscript);
 }
 
 // 음성 인식 중 에러 처리
@@ -131,20 +140,16 @@ function saveResultToLocal(result) {
         localStorage.setItem('recordedVoice', result);
     } else {
         console.log("localStorage is not supported");
-        // 여기에 대체 저장 방법을 구현할 수 있습니다.
     }
 }
 
 // 화면에 최종 텍스트를 표시하는 함수
 function displayFinalTranscript(text) {
-    clearListeningMessage(); // "AI 면접관이 듣고 있습니다" 메시지 삭제
-    const interimItem = document.querySelector('.interim-item');
-    if (interimItem) {
-        interimItem.remove(); // 임시 텍스트 요소 삭제
-    }
-    const resultItem = document.createElement('div'); // 새로운 결과 추가
+    clearListeningMessage();
+    const resultItem = document.createElement('div');
     resultItem.classList.add('result-item');
-    resultItem.textContent = text;
+    resultItem.textContent = text.trim();
+    resultContainer.innerHTML = '';
     resultContainer.appendChild(resultItem);
 }
 
@@ -165,18 +170,20 @@ function clearListeningMessage() {
 }
 
 // 음성 인식 타이머
-let silenceTimer;
-const SILENCE_TIMEOUT = 5000;
 function resetSilenceTimer() {
     clearTimeout(silenceTimer);
-    silenceTimer = setTimeout(stopRecognition, SILENCE_TIMEOUT);
+    silenceTimer = setTimeout(() => {
+        if (isRecognitionActive) {
+            stopRecognition();
+        }
+    }, SILENCE_TIMEOUT);
 }
 
 // 마이크 권한 요청 함수
 function requestMicrophoneAccess() {
     return navigator.mediaDevices.getUserMedia({ audio: true })
         .then(stream => {
-            stream.getTracks().forEach(track => track.stop()); // 권한 확인 후 트랙 중지
+            stream.getTracks().forEach(track => track.stop());
             console.log('마이크 권한이 허용되었습니다.');
         })
         .catch(err => {
@@ -199,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 모달을 숨기는 함수
     function hideModal() {
-        newModal.style.display = 'none'; // 모달 숨기기
+        newModal.style.display = 'none';
     }
 
     // 닫기 버튼 클릭 시 모달 숨기고 마이크 권한만 요청
@@ -208,7 +215,6 @@ document.addEventListener('DOMContentLoaded', function () {
         requestMicrophoneAccess()
             .then(() => {
                 console.log('마이크 권한이 허용되었습니다.');
-                // 여기서 음성 인식을 시작하지 않습니다.
             })
             .catch(handleMicrophoneAccessError);
     });
@@ -218,5 +224,5 @@ document.addEventListener('DOMContentLoaded', function () {
         newModal.style.display = 'block';
     }
 
-    showModal(); // 페이지 로드 시 항상 모달 보여주기
+    showModal();
 });
