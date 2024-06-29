@@ -42,7 +42,7 @@ recognition.onresult = (event) => {
             interimTranscript += transcript;
         }
     }
-    resultContainer.innerHTML = `<p>${finalTranscript}</p><p class="interim">${interimTranscript}</p>`;
+        
     resetSilenceTimer();
 };
 
