@@ -20,6 +20,8 @@ let isRecognitionActive = false;
 let silenceTimer;
 const SILENCE_TIMEOUT = 5000;
 
+
+
 // 음성 인식 결과 처리
 recognition.onresult = (event) => {
     let interimTranscript = '';
@@ -93,7 +95,7 @@ function resumeRecognition() {
 
 // 음성 인식 시작 함수
 function startRecognition() {
-    // finalTranscript = ''; // 이 줄을 제거합니다
+    finalTranscript = '';
     isRecognitionActive = true;
     recognition.start();
     displayListeningMessage();
@@ -138,13 +140,8 @@ function displayFinalTranscript(text) {
     const resultItem = document.createElement('div');
     resultItem.classList.add('result-item');
     resultItem.textContent = text.trim();
-    
-    // 새로운 결과를 기존 결과의 맨 위에 추가
-    if (resultContainer.firstChild) {
-        resultContainer.insertBefore(resultItem, resultContainer.firstChild);
-    } else {
-        resultContainer.appendChild(resultItem);
-    }
+    resultContainer.innerHTML = '';
+    resultContainer.appendChild(resultItem);
 }
 
 // "AI 면접관이 듣고 있습니다" 메시지 표시 함수
