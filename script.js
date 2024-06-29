@@ -98,9 +98,9 @@ function pauseRecognition() {
 
 // 음성 인식 재개 함수
 function resumeRecognition() {
+    console.log('Resuming recognition');
     recognition.start();
-    resultContainer.innerHTML = ''; // 컨테이너를 비웁니다
-    displayListeningMessage(); // 그 후 메시지를 표시합니다
+    displayListeningMessage();
     console.log('음성 인식 재개');
     resetSilenceTimer();
 }
@@ -158,6 +158,7 @@ function displayFinalTranscript(text) {
 
 // "AI 면접관이 듣고 있습니다" 메시지 표시 함수
 function displayListeningMessage() {
+    clearListeningMessage(); // 기존 메시지 삭제 후 추가
     const listeningMessage = document.createElement('div');
     listeningMessage.classList.add('listening-message');
     listeningMessage.textContent = 'AI 면접관이 듣고 있습니다';
