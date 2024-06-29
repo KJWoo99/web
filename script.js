@@ -91,6 +91,7 @@ function toggleRecognition() {
 
 // 음성 인식 일시정지 함수
 function pauseRecognition() {
+    isRecognitionActive = false;
     recognition.stop();
     clearListeningMessage();
     console.log('음성 인식 일시 정지');
@@ -98,11 +99,14 @@ function pauseRecognition() {
 
 // 음성 인식 재개 함수
 function resumeRecognition() {
-    console.log('Resuming recognition');
-    recognition.start();
-    displayListeningMessage();
-    console.log('음성 인식 재개');
-    resetSilenceTimer();
+    if (!isRecognitionActive) {
+        console.log('Resuming recognition');
+        recognition.start();
+        displayListeningMessage();
+        console.log('음성 인식 재개');
+        resetSilenceTimer();
+        isRecognitionActive = true;
+    }
 }
 
 // 음성 인식 시작 함수
