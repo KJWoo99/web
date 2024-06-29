@@ -192,7 +192,7 @@ function handleMicrophoneAccessError(error) {
     alert('마이크 권한을 얻지 못했습니다. 브라우저 설정에서 마이크 권한을 허용해주세요.');
 }
 
-// 일주일 동안 모달창을 보지 않기 기능
+// 모달창 보기
 document.addEventListener('DOMContentLoaded', function () {
     const newModal = document.getElementById('newModal');
     const closeModalButton = document.getElementById('closeNewModal');
@@ -213,15 +213,10 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(handleMicrophoneAccessError);
     });
 
-    // 페이지 로드 시 모달 보여주기 결정
-    function showModalBasedOnPreference() {
-        const hideUntil = localStorage.getItem('hideModalUntil');
-        if (!hideUntil || Date.now() > parseInt(hideUntil, 10)) {
-            newModal.style.display = 'block'; // 일주일이 지나거나 설정이 없는 경우 모달 보이기
-        } else {
-            hideModal(); // 아직 일주일이 지나지 않은 경우 모달 숨기기
-        }
+    // 페이지 로드 시 항상 모달 보여주기
+    function showModal() {
+        newModal.style.display = 'block';
     }
 
-    showModalBasedOnPreference(); // 페이지 로드 시 모달 보여주기 결정
+    showModal(); // 페이지 로드 시 항상 모달 보여주기
 });
