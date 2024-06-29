@@ -4,7 +4,6 @@ const recognition = new SpeechRecognition();
 // 결과 표시할 요소 선택
 const resultContainer = document.getElementById('resultContainer');
 let finalTranscript = '';
-let interimTranscript = '';
 // 모달 요소 선택
 const modal = document.getElementById('modal');
 const confirmButton = document.getElementById('confirmButton');
@@ -14,12 +13,26 @@ const startStopButton = document.getElementById('startStopButton');
 startStopButton.addEventListener('click', toggleRecognition);
 // 결과 처리를 위한 플래그
 let processResults = true;
-let isRecognitionPaused = false;
+
+
+
+
+// localStorage 지원 여부 확인
+function isLocalStorageSupported() {
+    try {
+        localStorage.setItem('test', 'test');
+        localStorage.removeItem('test');
+        return true;
+    } catch(e) {
+        return false;
+    }
+}
+
 
 // 음성 인식 결과 처리
 recognition.onresult = (event) => {
     if (!processResults) return;
-    interimTranscript = '';
+    let interimTranscript = '';
     for (let i = event.resultIndex; i < event.results.length; i++) {
         const transcript = event.results[i][0].transcript;
         if (event.results[i].isFinal) {
@@ -28,7 +41,7 @@ recognition.onresult = (event) => {
             interimTranscript += transcript;
         }
     }
-    displayInterimTranscript(interimTranscript);
+    // Reset silence timer on receiving a result
     resetSilenceTimer();
 };
 
@@ -69,7 +82,6 @@ function toggleRecognition() {
 
 // 음성 인식 일시정지 함수
 function pauseRecognition() {
-    isRecognitionPaused = true;
     recognition.stop();
     clearListeningMessage(); // "AI 면접관이 듣고 있습니다" 메시지 삭제
     console.log('음성 인식 일시 정지');
@@ -77,7 +89,6 @@ function pauseRecognition() {
 
 // 음성 인식 재개 함수
 function resumeRecognition() {
-    isRecognitionPaused = false;
     recognition.start();
     displayListeningMessage(); // "AI 면접관이 듣고 있습니다" 메시지 표시
     console.log('음성 인식 재개');
@@ -98,11 +109,10 @@ function startRecognition() {
 function stopRecognition() {
     recognition.stop();
     console.log('음성 인식 멈춤');
-    startStopButton.classList.remove('active'); // 버튼 비활성화
-    clearTimeout(silenceTimer); // Silence 타이머 초기화
-    clearListeningMessage(); // "AI 면접관이 듣고 있습니다" 메시지 삭제
-    displayFinalTranscript(finalTranscript); // 최종 결과 표시
-    saveResultToLocal(finalTranscript); // 결과 저장
+    startStopButton.classList.remove('active');
+    displayFinalTranscript(finalTranscript);
+    saveResultToLocal(finalTranscript); // 여기에서 결과 저장
+    clearTimeout(silenceTimer);
 }
 
 // 음성 인식 중 에러 처리
@@ -111,34 +121,31 @@ recognition.onerror = (event) => {
 };
 
 // 사용자가 말을 멈춰도 계속 인식하도록 설정
-recognition.continuous = true;
+recognition.continuous = false;
 recognition.interimResults = true;
 recognition.maxAlternatives = 5000;
 
 // 결과를 로컬 스토리지에 저장하는 함수
 function saveResultToLocal(result) {
-    localStorage.setItem('recordedVoice', result);
+    if (isLocalStorageSupported()) {
+        localStorage.setItem('recordedVoice', result);
+    } else {
+        console.log("localStorage is not supported");
+        // 여기에 대체 저장 방법을 구현할 수 있습니다.
+    }
 }
 
 // 화면에 최종 텍스트를 표시하는 함수
 function displayFinalTranscript(text) {
-    clearListeningMessage();
-    resultContainer.innerHTML = ''; // 이전 결과 모두 지우기
-    const resultItem = document.createElement('div');
+    clearListeningMessage(); // "AI 면접관이 듣고 있습니다" 메시지 삭제
+    const interimItem = document.querySelector('.interim-item');
+    if (interimItem) {
+        interimItem.remove(); // 임시 텍스트 요소 삭제
+    }
+    const resultItem = document.createElement('div'); // 새로운 결과 추가
     resultItem.classList.add('result-item');
     resultItem.textContent = text;
     resultContainer.appendChild(resultItem);
-}
-
-// 화면에 중간 텍스트를 표시하는 함수
-function displayInterimTranscript(text) {
-    let interimItem = document.querySelector('.interim-item');
-    if (!interimItem) {
-        interimItem = document.createElement('div');
-        interimItem.classList.add('interim-item');
-        resultContainer.appendChild(interimItem);
-    }
-    interimItem.textContent = text;
 }
 
 // "AI 면접관이 듣고 있습니다" 메시지 표시 함수
@@ -160,17 +167,9 @@ function clearListeningMessage() {
 // 음성 인식 타이머
 let silenceTimer;
 const SILENCE_TIMEOUT = 5000;
-
 function resetSilenceTimer() {
     clearTimeout(silenceTimer);
-    silenceTimer = setTimeout(() => {
-        if (!isRecognitionPaused) {
-            stopRecognition();
-            displayFinalTranscript(finalTranscript);
-            saveResultToLocal(finalTranscript);
-            // 여기에 최종 결과를 처리하는 추가 로직을 넣을 수 있습니다.
-        }
-    }, SILENCE_TIMEOUT);
+    silenceTimer = setTimeout(stopRecognition, SILENCE_TIMEOUT);
 }
 
 // 마이크 권한 요청 함수
@@ -214,15 +213,10 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(handleMicrophoneAccessError);
     });
 
-    // 페이지 로드 시 모달 보여주기 결정
-    function showModalBasedOnPreference() {
-        const hideUntil = localStorage.getItem('hideModalUntil');
-        if (!hideUntil || Date.now() > parseInt(hideUntil, 10)) {
-            newModal.style.display = 'block'; // 일주일이 지나거나 설정이 없는 경우 모달 보이기
-        } else {
-            hideModal(); // 아직 일주일이 지나지 않은 경우 모달 숨기기
-        }
+    // 페이지 로드 시 항상 모달 보여주기
+    function showModal() {
+        newModal.style.display = 'block';
     }
 
-    showModalBasedOnPreference(); // 페이지 로드 시 모달 보여주기 결정
+    showModal(); // 페이지 로드 시 항상 모달 보여주기
 });
