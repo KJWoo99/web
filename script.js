@@ -156,7 +156,6 @@ function displayFinalTranscript(text) {
     const resultItem = document.createElement('div');
     resultItem.classList.add('result-item');
     resultItem.textContent = text.trim();
-    resultContainer.innerHTML = '';
     resultContainer.appendChild(resultItem);
 }
 
