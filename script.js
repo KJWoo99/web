@@ -158,7 +158,6 @@ function displayFinalTranscript(text) {
 
 // "AI 면접관이 듣고 있습니다" 메시지 표시 함수
 function displayListeningMessage() {
-    clearListeningMessage(); // 기존 메시지 삭제 후 추가
     const listeningMessage = document.createElement('div');
     listeningMessage.classList.add('listening-message');
     listeningMessage.textContent = 'AI 면접관이 듣고 있습니다';
