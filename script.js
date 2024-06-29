@@ -66,6 +66,7 @@ confirmButton.addEventListener('click', () => {
 // 모달 버튼 클릭 이벤트 핸들러 - 아니요 버튼
 cancelButton.addEventListener('click', () => {
     hideModal();
+    resumeRecognition(); // 음성 인식 재개
 });
 
 // 음성 인식 시작/멈춤 토글 함수
