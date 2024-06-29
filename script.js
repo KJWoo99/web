@@ -157,13 +157,13 @@ elements.cancelButton.addEventListener('click', () => {
 
 // 초기화
 document.addEventListener('DOMContentLoaded', () => {
+    // 페이지 로드 시 새 모달 표시
+    toggleElement(elements.newModal, true);
+
     elements.closeModalButton.addEventListener('click', () => {
         toggleElement(elements.newModal, false);
         requestMicrophoneAccess()
             .then(() => console.log('마이크 권한이 허용되었습니다.'))
             .catch(err => console.error('마이크 접근 오류:', err));
     });
-
-    // 페이지 로드 시 새 모달 표시
-    toggleElement(elements.newModal, true);
 });
