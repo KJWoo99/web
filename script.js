@@ -99,7 +99,8 @@ function pauseRecognition() {
 // 음성 인식 재개 함수
 function resumeRecognition() {
     recognition.start();
-    displayListeningMessage(); // "AI 면접관이 듣고 있습니다" 메시지 표시
+    resultContainer.innerHTML = ''; // 컨테이너를 비웁니다
+    displayListeningMessage(); // 그 후 메시지를 표시합니다
     console.log('음성 인식 재개');
     resetSilenceTimer();
 }
