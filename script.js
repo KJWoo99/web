@@ -17,6 +17,7 @@ startStopButton.addEventListener('click', toggleRecognition);
 
 // 결과 처리를 위한 플래그
 let isRecognitionActive = false;
+let processResults = true;
 let silenceTimer;
 const SILENCE_TIMEOUT = 5000;
 
@@ -24,6 +25,7 @@ const SILENCE_TIMEOUT = 5000;
 
 // 음성 인식 결과 처리
 recognition.onresult = (event) => {
+    if (!processResults) return;
     let interimTranscript = '';
     for (let i = event.resultIndex; i < event.results.length; i++) {
         const transcript = event.results[i][0].transcript;
@@ -47,6 +49,7 @@ recognition.onend = () => {
 function showModal() {
     pauseRecognition();
     modal.style.display = 'block';
+    processResults = false; // 결과 처리 중지
 }
 
 // 모달창 숨기는 함수
