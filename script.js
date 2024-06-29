@@ -192,31 +192,35 @@ function handleMicrophoneAccessError(error) {
     alert('마이크 권한을 얻지 못했습니다. 브라우저 설정에서 마이크 권한을 허용해주세요.');
 }
 
-// 일주일 동안 모달창을 보지 않기 기능
+//모달창
 document.addEventListener('DOMContentLoaded', function () {
     const newModal = document.getElementById('newModal');
     const closeModalButton = document.getElementById('closeNewModal');
 
-    // 모달을 숨기는 함수
-    function hideModal() {
-        newModal.style.display = 'none'; // 모달 숨기기
+    if (newModal && closeModalButton) {
+        // 모달을 숨기는 함수
+        function hideModal() {
+            newModal.style.display = 'none'; // 모달 숨기기
+        }
+
+        // 닫기 버튼 클릭 시 모달 숨기고 마이크 권한만 요청
+        closeModalButton.addEventListener('click', function() {
+            hideModal();
+            requestMicrophoneAccess()
+                .then(() => {
+                    console.log('마이크 권한이 허용되었습니다.');
+                    // 여기서 음성 인식을 시작하지 않습니다.
+                })
+                .catch(handleMicrophoneAccessError);
+        });
+
+        // 페이지 로드 시 항상 모달 보여주기
+        function showModal() {
+            newModal.style.display = 'block';
+        }
+
+        showModal(); // 페이지 로드 시 항상 모달 보여주기
+    } else {
+        console.error('Modal elements not found. Check your HTML for elements with IDs "newModal" and "closeNewModal".');
     }
-
-    // 닫기 버튼 클릭 시 모달 숨기고 마이크 권한만 요청
-    closeModalButton.addEventListener('click', function() {
-        hideModal();
-        requestMicrophoneAccess()
-            .then(() => {
-                console.log('마이크 권한이 허용되었습니다.');
-                // 여기서 음성 인식을 시작하지 않습니다.
-            })
-            .catch(handleMicrophoneAccessError);
-    });
-
-    // 페이지 로드 시 항상 모달 보여주기
-    function showModal() {
-        newModal.style.display = 'block';
-    }
-
-    showModal(); // 페이지 로드 시 항상 모달 보여주기
 });
