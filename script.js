@@ -52,9 +52,7 @@ function showModal() {
 // 모달창 숨기는 함수
 function hideModal() {
     modal.style.display = 'none';
-    if (isRecognitionActive) {
-        resumeRecognition();
-    }
+    processResults = true; // 결과 처리 다시 시작
 }
 
 // 모달 버튼 클릭 이벤트 핸들러 - 예 버튼
