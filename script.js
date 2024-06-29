@@ -21,7 +21,16 @@ let processResults = true;
 let silenceTimer;
 const SILENCE_TIMEOUT = 5000;
 
-
+// localStorage 지원 여부 확인
+function isLocalStorageSupported() {
+    try {
+        localStorage.setItem('test', 'test');
+        localStorage.removeItem('test');
+        return true;
+    } catch(e) {
+        return false;
+    }
+}
 
 // 음성 인식 결과 처리
 recognition.onresult = (event) => {
@@ -90,7 +99,7 @@ function pauseRecognition() {
 // 음성 인식 재개 함수
 function resumeRecognition() {
     recognition.start();
-    displayListeningMessage();
+    displayListeningMessage(); // "AI 면접관이 듣고 있습니다" 메시지 표시
     console.log('음성 인식 재개');
     resetSilenceTimer();
 }
@@ -100,7 +109,7 @@ function startRecognition() {
     finalTranscript = '';
     isRecognitionActive = true;
     recognition.start();
-    displayListeningMessage();
+    displayListeningMessage(); // "AI 면접관이 듣고 있습니다" 메시지 표시
     console.log('음성 인식 시작');
     startStopButton.classList.add('active');
     resetSilenceTimer();
